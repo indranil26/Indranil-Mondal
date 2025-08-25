@@ -3,14 +3,15 @@
     font-family: 'Helvetica Neue', Arial, sans-serif;
   }
   .banner-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 32px; background: #f5f5f5;
+    display: flex; align-items: center; justify-content: space-between; gap: 720px;
+    padding: 26.67px 133.33px; background: #F5F5F5;
   }
-  .logo { font-weight: bold; font-size: 1.25rem; }
-  .tagline { flex: 1; text-align: center; color: #c00; }
+  .logo { color: #000000; font-weight: bold; width: 403.85028076171875px; height: 50.666831970214844px; font-size: 1.25rem; }
+  .tagline {width: 693px; height: 36px; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-weight: 400; font-style: regular; font-size: 42.67px; line-height: 35.8px; flex: 1; text-align: center; color: #c00; }
   .choose-gift-btn {
-    background: #ffe10e;
-    border: none; padding: 10px 32px; font-weight: 600;
+    background: #FFF544;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    border: none; padding: 10px 32px; font-weight: 400;
     font-size: 1rem; cursor: pointer; border-radius: 3px;
     box-shadow: 0 0 0 2px #ffe10e;
     transition: background 0.25s, box-shadow 0.20s, transform 0.15s;
