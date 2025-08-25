@@ -1,14 +1,16 @@
 {
   "sections": {
-    "main": {
-      "type": "main-page",
-      "settings": {
-        "padding_top": 28,
-        "padding_bottom": 28
-      }
+    "banner-custom": {
+      "type": "banner-custom",
+      "settings": {}
+    },
+    "grid-custom": {
+      "type": "grid-custom",
+      "settings": {}
     }
   },
   "order": [
-    "main"
+    "banner-custom",
+    "grid-custom"
   ]
 }
