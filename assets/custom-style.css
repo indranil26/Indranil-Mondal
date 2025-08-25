@@ -3,15 +3,14 @@
     font-family: 'Helvetica Neue', Arial, sans-serif;
   }
   .banner-header {
-    display: flex; align-items: center; justify-content: space-between; gap: 720px;
-    padding: 26.67px 133.33px; background: #F5F5F5;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 32px; background: #f5f5f5;
   }
-  .logo { color: #000000; font-weight: bold; width: 403.85028076171875px; height: 50.666831970214844px; font-size: 1.25rem; }
-  .tagline {width: 693px; height: 36px; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-weight: 400; font-style: regular; font-size: 42.67px; line-height: 35.8px; flex: 1; text-align: center; color: #c00; }
+  .logo { font-weight: bold; font-size: 1.25rem; }
+  .tagline { flex: 1; text-align: center; color: #c00; }
   .choose-gift-btn {
-    background: #FFF544;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    border: none; padding: 10px 32px; font-weight: 400;
+    background: #ffe10e;
+    border: none; padding: 10px 32px; font-weight: 600;
     font-size: 1rem; cursor: pointer; border-radius: 3px;
     box-shadow: 0 0 0 2px #ffe10e;
     transition: background 0.25s, box-shadow 0.20s, transform 0.15s;
@@ -57,55 +56,4 @@
   }
   
   /* ...Add any extra background illustration styles for .banner-bg-graphic as needed... */
-  .custom-product-grid {
-    margin: 36px 0;
-    padding: 12px 0 40px;
-  }
-  .grid-title { font-size: 1.6rem; margin-bottom: 28px; }
-  .grid {
-    display: grid; gap: 28px;
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .grid-item-imgwrap { position: relative; }
-  .grid-item img { width: 100%; border-radius: 8px; }
-  .grid-plus-btn {
-    position: absolute; right: 12px; top: 12px;
-    width: 32px; height: 32px; font-size: 1.6rem;
-    border: none; background: #fff; border-radius: 100%;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.10);
-    cursor: pointer; transition: background 0.20s;
-    z-index: 2;
-  }
-  .grid-plus-btn:hover { background: #f05050; color: #fff; }
-  
-  .modal {
-    display: none;
-    position: fixed; top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(40,40,40,0.54);
-    align-items: center; justify-content: center;
-    z-index: 1234;
-  }
-  .modal[aria-hidden="false"] { display: flex; }
-  .modal-content {
-    background: #fff; border-radius: 12px; box-shadow: 0 2px 16px 0 #4442;
-    padding: 32px 24px; max-width: 380px; width: 94vw;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .modal-close-btn {
-    position: absolute; right: 14px; top: 18px; font-size: 2rem; border: none; background: transparent; cursor: pointer;
-  }
-  #modal-image img { width: 90px; height: 90px; border-radius: 5px; object-fit: cover; }
-  #modal-title { font-size: 1.1rem; font-weight: 700; }
-  #modal-price { font-weight: bold; margin: 2px 0 8px; }
-  #modal-desc { font-size: 0.97rem; color: #333; margin-bottom: 7px;}
-  .add-to-cart-btn { width: 100%; }
-  
-  @media (max-width: 900px) {
-    .grid { grid-template-columns: repeat(2,1fr);}
-  }
-  @media (max-width:600px){
-    .grid { grid-template-columns: 1fr;}
-  }
-  
   
