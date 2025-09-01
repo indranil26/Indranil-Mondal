@@ -1,0 +1,19 @@
+{
+  "layout": "gift-guide",
+  "sections": {
+    "main": {
+      "type": "gift-guide-landing",
+      "settings": {},
+      "blocks": {
+        "g1": { "type": "gallery_item", "settings": { "overlay_position": "overlay-1", "card_asset_url": "/pages/orange-wide-leg" } },
+        "g2": { "type": "gallery_item", "settings": { "overlay_position": "overlay-2", "card_asset_url": "/pages/tailored-jacket" } },
+        "g3": { "type": "gallery_item", "settings": { "overlay_position": "overlay-3", "card_asset_url": "/pages/accordian-pleated-dress" } },
+        "g4": { "type": "gallery_item", "settings": { "overlay_position": "overlay-4", "card_asset_url": "/pages/green-trench-coat" } },
+        "g5": { "type": "gallery_item", "settings": { "overlay_position": "overlay-5", "card_asset_url": "/pages/tennis-blue-tshirt" } },
+        "g6": { "type": "gallery_item", "settings": { "overlay_position": "overlay-6", "card_asset_url": "/pages/long-sleeve-tennis-top" } }
+      },
+      "block_order": ["g1","g2","g3","g4","g5","g6"]
+    }
+  },
+  "order": ["main"]
+}

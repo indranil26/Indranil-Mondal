@@ -1,0 +1,806 @@
+<style>
+  /* Reset and base styles */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Layout components */
+  .product-container {
+    font-family: 'Jost', Arial, sans-serif;
+    background-color: #f0f0f0;
+    /* Light gray for card contrast; or use transparent */
+    line-height: 1.5;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 4px #00000033;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 12px 16px 24px 16px;
+  }
+
+  .product-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .product-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  @media (min-width: 640px) {
+    .product-header {
+      flex-direction: row;
+      align-items: end;
+    }
+
+    .product-image {
+      height: 159px;
+      width: 45%;
+      object-fit: cover;
+      margin-bottom: -2px;
+      margin-right: 16px;
+    }
+
+    .product-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      flex: 1;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .close-button {
+      height: 11px;
+    }
+  }
+
+  .close-button {
+    width: 16px;
+    height: 11px;
+    align-self: flex-end;
+    margin-bottom: 16px;
+    cursor: pointer;
+  }
+
+  .product-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 10px;
+  }
+
+  /* Typography */
+  .product-title {
+    font-size: 14px;
+    font-family: 'Jost', Arial, sans-serif;
+    font-weight: 300;
+    line-height: 18px;
+    text-align: left;
+    color: #000000;
+    width: auto;
+  }
+
+  @media (min-width: 768px) {
+    .product-title {
+      font-size: 16px;
+      line-height: 24px;
+    }
+  }
+
+  .product-price {
+    font-size: 14px;
+    font-family: 'Lustria', serif;
+    font-weight: 400;
+    line-height: 16px;
+    text-align: left;
+    color: #000000;
+    width: auto;
+  }
+
+  @media (min-width: 768px) {
+    .product-price {
+      font-size: 16px;
+      line-height: 21px;
+    }
+  }
+
+  .product-description {
+    font-size: 12px;
+    font-family: 'Jost', Arial, sans-serif;
+    font-weight: 300;
+    line-height: 14px;
+    text-align: left;
+    color: #000000;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .product-description {
+      font-size: 13px;
+      line-height: 15px;
+    }
+
+    .product-image {
+      height: 184px;
+      margin-left: 8px;
+    }
+  }
+
+  /* Color selection */
+  .color-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 272px;
+    gap: 2px;
+    margin-top: 16px;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-family: 'Jost', Arial, sans-serif;
+    font-weight: 400;
+    line-height: 16px;
+    text-align: left;
+    color: #333333;
+    width: auto;
+  }
+
+  @media (min-width: 768px) {
+    .section-label {
+      font-size: 14px;
+      line-height: 21px;
+    }
+  }
+
+  .color-options {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    border: 1px solid #000000;
+  }
+
+  .color-option {
+    padding-right: 79px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .color-option:hover {
+    opacity: 0.8;
+  }
+
+  .color-line {
+    width: 7px;
+    height: 32px;
+    border: 1px solid #000000;
+  }
+
+  @media (min-width: 768px) {
+    .color-line {
+      height: 40px;
+    }
+  }
+
+  .white-line {
+    background-color: #ffffff !important;
+  }
+
+  .black-line {
+    background-color: #000000;
+  }
+
+  .color-text {
+    font-size: 16px;
+    font-family: 'Jost', Arial, sans-serif;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+    text-transform: capitalize;
+    color: #000000;
+    margin-left: 8px;
+  }
+
+  @media (min-width: 768px) {
+    .color-text {
+      font-size: 18px;
+      line-height: 27px;
+    }
+  }
+
+  .black-option {
+    padding: 0 0px;
+    flex: 1;
+  }
+
+  /* Size selection */
+  .size-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 272px;
+    gap: 2px;
+    margin-top: 8px;
+  }
+
+  .size-dropdown {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border: 0 solid #000000;
+    position: relative;
+  }
+
+  .size-text {
+    padding-left: 3%;
+    font-size: 14px;
+    font-family: 'Jost', Arial, sans-serif;
+    font-weight: 400;
+    line-height: 18px;
+    text-align: left;
+    color: #000000;
+    margin-bottom: 4px;
+  }
+
+  @media (min-width: 768px) {
+    .size-text {
+      font-size: 16px;
+      line-height: 24px;
+      padding-left: 4%;
+    }
+  }
+
+  .dropdown-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    flex: 1;
+    padding: 0 8px;
+  }
+
+  .dropdown-line {
+    width: 1px;
+    height: 30px;
+    background-color: #000000;
+  }
+
+  @media (min-width: 768px) {
+    .dropdown-line {
+      height: 38px;
+    }
+  }
+
+  .dropdown-arrow {
+    width: 12px;
+    height: 6px;
+    margin-left: 20px;
+  }
+
+  /* Add to cart button */
+  .add-to-cart {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    max-width: 272px;
+    background-color: #000000;
+    padding: 8px 30px;
+    margin-top: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  @media (min-width: 768px) {
+    .add-to-cart {
+      margin-top: 50px;
+    }
+  }
+
+  .add-to-cart:hover {
+    background-color: #333333;
+    transform: translateY(-2px);
+  }
+
+  .add-to-cart:active {
+    transform: translateY(0);
+    background-color: #555555;
+  }
+
+  .cart-text {
+    font-size: 14px;
+    font-family: 'Jost', Arial, sans-serif;
+    font-weight: 400;
+    line-height: 18px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  @media (min-width: 768px) {
+    .color-option {
+      padding-right: 90px;
+    }
+
+    .cart-text {
+      font-size: 16px;
+      line-height: 24px;
+    }
+  }
+
+  .cart-arrow {
+    width: 32px;
+    height: 1px;
+    margin-left: 28px;
+  }
+
+  /* Interactive states */
+  .color-option.selected .color-line {
+    border-width: 6px;
+  }
+
+  .size-dropdown:hover {
+    background-color: #f9f9f9;
+  }
+
+  /* Responsive media queries */
+  @media (min-width: 640px) {
+    .color-option {
+      padding-right: 79px;
+    }
+
+    .product-price {
+      font-size: 17px;
+    }
+
+    .product-container {
+      max-width: 282px;
+    }
+
+    .product-description {
+      font-size: 14px;
+      font-weight: 200;
+    }
+
+    .color-section {
+      margin-top: -7px;
+    }
+
+    .black-option {
+      padding: 0 0px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .product-container {
+      max-width: 347px;
+      padding: 16px 24px 32px 24px;
+    }
+
+    .black-option {
+      padding: 0 0px;
+    }
+
+    .color-section {
+      margin-top: -7px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .color-option {
+      padding-right: 100px;
+    }
+
+    .product-container {
+      max-width: 350px;
+      padding: 20px 32px 40px 32px;
+    }
+
+    .product-description {
+      font-size: 12px !important;
+    }
+
+    .black-option {
+      padding: 0px 0px !important;
+    }
+
+    .color-section {
+      margin-top: -7px !important;
+    }
+
+    .product-image {
+      height: 152px !important;
+      margin-left: 5px !important;
+    }
+  }
+
+  /* 1 ─ White swatch must actually be white */
+  .color-line.white-line {
+    background-color: #ffffff !important;
+    /* remove inherited black fill  */
+    border: 1px solid #000000 !important;
+    /* thin outline so it’s visible */
+  }
+
+  /* 2 ─ Give the “Choose your size” bar a black border */
+  .size-dropdown {
+    border: 1px solid #000 !important;
+  }
+
+  @media (min-width: 0px) and (max-width: 639px) {
+    .size-section {
+      margin-top: 12px;
+    }
+
+    .product-header {
+      flex-direction: row;
+    }
+
+    .product-details {
+      padding-top: 31px;
+    }
+
+    .product-container {
+      max-width: 330px !important;
+    }
+
+    .product-image {
+      width: 123px !important;
+      height: 122px !important;
+      margin-bottom: -34px !important;
+      padding-left: 10px !important;
+    }
+
+    .product-info {
+      padding-left: 7px !important;
+    }
+
+    .product-description {
+      font-size: 13px !important;
+    }
+
+    .color-section {
+      margin-top: 0px !important;
+    }
+
+    .black-option {
+      padding: 0px 0px !important;
+    }
+
+    .product-container {
+      position: relative;
+      /* Ensures .close-button positions relative to the card */
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      cursor: pointer;
+    }
+  }
+
+  /* ——— base bar (you already have most of this) ——— */
+  .size-dropdown {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .dropdown-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  .dropdown-arrow {
+    width: 12px;
+    height: 6px;
+    transition: transform 0.25s;
+  }
+
+  /* ——— menu ——— */
+  .dropdown-menu {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    max-height: 96px;
+    /* ≈3×32-px rows */
+    overflow-y: auto;
+    border: 1px solid #000;
+    background: #fff;
+    box-shadow: 0 6px 12px #0002;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    display: none;
+    z-index: 1000;
+  }
+
+  /* hide scrollbars (Chrome/Safari/Firefox/Edge) */
+  .dropdown-menu {
+    scrollbar-width: none;
+    /* Firefox    */
+    -ms-overflow-style: none;
+    /* IE 10/11   */
+  }
+
+  .dropdown-menu::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* WebKit */
+
+  .dropdown-menu.show {
+    display: block;
+  }
+
+  .dropdown-option {
+    padding: 8px 12px;
+    font-family: 'Jost', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 18px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+  }
+
+  .dropdown-option:last-child {
+    border-bottom: none;
+  }
+
+  .dropdown-option:hover,
+  .dropdown-option.selected {
+    background: #000;
+    color: #fff;
+  }
+
+  /* Add these for selected state visuals (background black, text white) */
+  .color-option.selected {
+    background-color: #000000;
+  }
+
+  .color-option.selected .color-text {
+    color: #ffffff;
+  }
+
+  /* Ensure grey line border matches its background (prevents turning black when thickened) */
+  /* .color-line.black-line {
+            border: 1px solid #000000 !important;
+        } */
+
+  .color-line.white-line {
+    background-color: #ffffff !important;
+  }
+</style>
+<div class="product-container">
+  <div class="product-content">
+    <div class="product-header">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_image_822.png?v=94171949263320698681756707098"
+        alt="Tailored Jacket" class="product-image">
+      <div class="product-info">
+        <img
+          src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_group_1000008134.svg?v=110356064147524365121756707096"
+          alt="Close" class="close-button">
+        <div class="product-details">
+          <h1 class="product-title">Orange Wide Leg</h1>
+          <p class="product-price">980,00€</p>
+          <p class="product-description">
+            This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="color-section">
+      <label class="section-label">Color</label>
+      <div class="color-options">
+        <div class="slider"></div>
+        <div class="color-option">
+          <div class="color-line white-line"></div>
+          <span class="color-text">White</span>
+        </div>
+        <div class="color-option black-option">
+          <div class="color-line black-line"></div>
+          <span class="color-text">Black</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="size-section">
+      <label class="section-label">Size</label>
+      <div class="size-dropdown" id="sizeDropdown" tabindex="0">
+        <span class="size-text" id="sizeLabel">Choose your size</span>
+
+        <div class="dropdown-controls">
+          <div class="dropdown-line"></div>
+          <img
+            src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_arrow_down.svg?v=141419414469500226111756707092"
+            alt="toggle" class="dropdown-arrow" id="sizeArrow">
+        </div>
+
+        <ul class="dropdown-menu" id="sizeMenu">
+          <li class="dropdown-option">XS</li>
+          <li class="dropdown-option">S</li>
+          <li class="dropdown-option">M</li>
+          <li class="dropdown-option">L</li>
+        </ul>
+      </div>
+    </div>
+
+    <button class="add-to-cart" onclick="addToCart()">
+      <span class="cart-text">Add to cart</span>
+      <img
+        src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_line_15_white_a700.svg?v=73367509143898519221756707105"
+        alt="Arrow" class="cart-arrow">
+    </button>
+  </div>
+</div>
+<script>
+  // Add this line in your script
+  window.addToCart = addToCart;
+  const dropdown = document.getElementById('sizeDropdown');
+  const menu = document.getElementById('sizeMenu');
+  const label = document.getElementById('sizeLabel');
+  const arrow = document.getElementById('sizeArrow');
+
+  let open = false;
+
+  function openMenu() {
+    open = true;
+    menu.classList.add('show');
+    arrow.style.transform = 'rotate(180deg)';
+  }
+
+  function closeMenu() {
+    open = false;
+    menu.classList.remove('show');
+    arrow.style.transform = 'rotate(0deg)';
+  }
+
+  function toggleMenu() {
+    open ? closeMenu() : openMenu();
+  }
+
+  /* open / close when the bar is clicked */
+  dropdown.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  /* pick a size → update label, highlight, close */
+  menu.querySelectorAll('.dropdown-option').forEach((opt) => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation(); // <— this stops bubbling and prevents re-toggle
+      label.textContent = opt.textContent;
+      menu.querySelectorAll('.dropdown-option').forEach((o) => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      closeMenu();
+    });
+  });
+
+  /* click outside or Esc closes menu */
+  window.addEventListener('click', () => open && closeMenu());
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && open) closeMenu();
+    if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === dropdown) {
+      e.preventDefault();
+      toggleMenu();
+    }
+  });
+
+  // Color selection handling
+  const colorOptions = document.querySelectorAll('.color-option');
+
+  colorOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+      // Remove 'selected' from all options
+      colorOptions.forEach((opt) => opt.classList.remove('selected'));
+      // Add 'selected' to the clicked option
+      option.classList.add('selected');
+    });
+  });
+
+  function addToCart() {
+    // Get selected variant ID (you'll need to determine this based on color/size selection)
+    const colorOption = document.querySelector('.color-option.selected .color-text')?.textContent.toLowerCase();
+    const sizeOption = document.querySelector('#sizeLabel')?.textContent;
+
+    // Replace with actual variant IDs from your products
+    const variantIds = {
+      'black-xs': '42980281876563',
+
+      'white-xs': '42980281909331',
+
+      'black-s': '42980281942099',
+
+      'white-s': '42980281974867',
+
+      'black-m': '42980282007635',
+
+      'white-m': '42980282040403',
+
+      'black-l': '42980282073171',
+
+      'white-l': '42980282105939'
+      // Add all combinations
+    };
+
+    const selectedVariant = `${colorOption}-${sizeOption?.toLowerCase()}`;
+    const variantId = variantIds[selectedVariant];
+
+    if (!variantId) {
+      alert('Please select size and color');
+      return;
+    }
+
+    // Add main product to cart
+    const formData = new FormData();
+    formData.append('id', variantId);
+    formData.append('quantity', 1);
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Check if this is Black + Medium combination
+        if (colorOption === 'black' && sizeOption?.toLowerCase() === 'm') {
+          addSoftWinterJacket();
+        } else {
+          alert('Added to cart!');
+          closeModal();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error adding to cart');
+      });
+  }
+
+  function addSoftWinterJacket() {
+    // Replace with actual "Soft Winter Jacket" variant ID
+    const winterJacketVariantId = '42980282269779';
+
+    const formData = new FormData();
+    formData.append('id', winterJacketVariantId);
+    formData.append('quantity', 1);
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        alert('Added to cart! Soft Winter Jacket also added as bonus!');
+        closeModal();
+      })
+      .catch(error => {
+        console.error('Error adding winter jacket:', error);
+      });
+  }
+</script>

@@ -1,14 +1,7 @@
 {
+  "layout": "gift-guide",
   "sections": {
-    "main": {
-      "type": "main-page",
-      "settings": {
-        "padding_top": 28,
-        "padding_bottom": 28
-      }
-    }
+    "main": { "type": "gift-guide-landing", "settings": {} }
   },
-  "order": [
-    "main"
-  ]
+  "order": ["main"]
 }
