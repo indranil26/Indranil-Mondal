@@ -990,17 +990,6 @@
     background-color: #ffffff;
   }
 </style>
-<!-- Add this anywhere in your section file -->
-<div id="variant-ids" style="display: block; background: #f9f9f9; padding: 20px; margin: 20px;">
-  <h2>Product Variant IDs (Development Only)</h2>
-  {% for product in collections.all.products %}
-    <h3>{{ product.title }}</h3>
-    {% for variant in product.variants %}
-      <p>{{ variant.title }}: {{ variant.id }}</p>
-    {% endfor %}
-  {% endfor %}
-</div>
-
 <div class="main-container">
   <!-- Header Section -->
   <header class="header-section">
