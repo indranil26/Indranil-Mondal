@@ -1,9 +1,7 @@
 {
+  "layout": "gift-guide",
   "sections": {
-    "main": {
-      "type": "gift-guide-landing",
-      "settings": {}
-    }
+    "main": { "type": "gift-guide-landing", "settings": {} }
   },
   "order": ["main"]
 }
