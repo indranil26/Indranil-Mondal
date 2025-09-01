@@ -651,7 +651,7 @@
       </div>
     </div>
 
-    <button class="add-to-cart" onclick="addToCart()">
+    <button class="add-to-cart">
       <span class="cart-text">Add to cart</span>
       <img
         src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_line_15_white_a700.svg?v=73367509143898519221756707105"
@@ -801,4 +801,11 @@
         console.error('Error adding winter jacket:', error);
       });
   }
+
+  // Add this at the end of your script
+document.addEventListener('DOMContentLoaded', function() {
+  // Bind the add to cart click event
+  document.querySelector('.add-to-cart').addEventListener('click', addToCart);
+});
+
 </script>
