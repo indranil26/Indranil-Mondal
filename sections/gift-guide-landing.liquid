@@ -788,11 +788,11 @@
                transform: translateX(0);
            }
 
-           .button-choose:active::before,
+           {% comment %} .button-choose:active::before,
            .button-shop:active::before {
                transition: none;
                /* Prevent stutter on fast click */
-           }
+           } {% endcomment %}
 
 
            /* On hover, set the swapped text color */
