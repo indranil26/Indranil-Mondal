@@ -1134,71 +1134,73 @@
   <div class="product-card" id="modalContent"></div>
 </div>
 <script>
-  // Modal handling with dynamic loading
-  const modalOverlay = document.getElementById('modalOverlay');
-  const modalContent = document.getElementById('modalContent');
-  const imageOverlays = document.querySelectorAll('.image-overlay');
+    // Modal handling with dynamic loading
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
+    const imageOverlays = document.querySelectorAll('.image-overlay');
 
-  imageOverlays.forEach((overlay) => {
-    overlay.addEventListener('click', () => {
-      const filePath = overlay.getAttribute('data-card-file');
-      const cardTitle = overlay.getAttribute('data-card-title');
-      const cardPrice = overlay.getAttribute('data-card-price');
-      const cardDescription = overlay.getAttribute('data-card-description');
-      if (filePath) {
-        fetch(filePath)
-          .then((response) => {
-            if (!response.ok) throw new Error('File not found: ' + filePath);
-            return response.text();
-          })
-          .then((data) => {
-            data = data.replace('{{CARD_TITLE}}', cardTitle);
-            data = data.replace('{{CARD_PRICE}}', cardPrice);
-            data = data.replace('{{CARD_DESCRIPTION}}', cardDescription);
+    imageOverlays.forEach((overlay) => {
+      overlay.addEventListener('click', () => {
+    const filePath = overlay.getAttribute('data-card-file');
+    const cardTitle = overlay.getAttribute('data-card-title');
+    const cardPrice = overlay.getAttribute('data-card-price');
+    const cardDescription = overlay.getAttribute('data-card-description');
 
-            modalContent.innerHTML = data; // Load external HTML
-            modalOverlay.classList.add('active');
+    if (filePath) {
+      fetch(filePath)
+        .then((response) => {
+          if (!response.ok) throw new Error('File not found: ' + filePath);
+          return response.text();
+        })
+        .then((data) => {
+          // Replace placeholders in the HTML with dynamic content
+          data = data.replace('{{CARD_TITLE}}', cardTitle);
+          data = data.replace('{{CARD_PRICE}}', cardPrice);
+          data = data.replace('{{CARD_DESCRIPTION}}', cardDescription);
 
-            // Attach close listener to the loaded close button
-            const closeBtn = modalContent.querySelector('.close-button');
-            if (closeBtn) {
-              closeBtn.addEventListener('click', closeModal);
-            } else {
-              console.warn('Close button not found in loaded content');
-            }
+          modalContent.innerHTML = data;
+          modalOverlay.classList.add('active');
 
-            // Execute any scripts in loaded content
-            const scripts = modalContent.getElementsByTagName('script');
-            for (let script of scripts) {
-              eval(script.innerText); // Run scripts (use cautiously)
-            }
-          })
-          .catch((error) => console.error('Error loading card:', error));
-      } else {
-        console.error('No data-card-file attribute on overlay');
+          // Attach close listener to the loaded close button
+          const closeBtn = modalContent.querySelector('.close-button');
+          if (closeBtn) {
+            closeBtn.addEventListener('click', closeModal);
+          } else {
+            console.warn('Close button not found in loaded content');
+          }
+
+          // Execute any scripts in loaded content
+          const scripts = modalContent.getElementsByTagName('script');
+          for (let script of scripts) {
+            eval(script.innerText); // Run scripts (use cautiously)
+          }
+        })
+        .catch((error) => console.error('Error loading card:', error));
+    } else {
+      console.error('No data-card-file attribute on overlay');
+    }
+  });
+  );
+
+    // Close function
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+      modalContent.innerHTML = ''; // Clear for next load
+    }
+
+    // Close on overlay click (outside card)
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        closeModal();
       }
     });
-  });
 
-  // Close function
-  function closeModal() {
-    modalOverlay.classList.remove('active');
-    modalContent.innerHTML = ''; // Clear for next load
-  }
-
-  // Close on overlay click (outside card)
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) {
-      closeModal();
-    }
-  });
-
-  // Close on Esc key
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeModal();
-    }
-  });
+    // Close on Esc key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
 </script>
 {% schema %}
 {
