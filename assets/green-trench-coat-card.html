@@ -660,6 +660,7 @@
   </div>
 </div>
 <script>
+  window.addToCart = addToCart;
   const dropdown = document.getElementById('sizeDropdown');
   const menu = document.getElementById('sizeMenu');
   const label = document.getElementById('sizeLabel');
@@ -721,74 +722,6 @@
       option.classList.add('selected');
     });
   });
-
-  function addToCart() {
-    // Get selected variant ID (you'll need to determine this based on color/size selection)
-    const colorOption = document.querySelector('.color-option.selected .color-text')?.textContent.toLowerCase();
-    const sizeOption = document.querySelector('#sizeLabel')?.textContent;
-
-    // Replace with actual variant IDs from your products
-    const variantIds = {
-      'red-xs': 'VARIANT_ID_HERE',
-      'red-s': 'VARIANT_ID_HERE',
-      'red-m': 'VARIANT_ID_HERE',
-      // Add all combinations
-    };
-
-    const selectedVariant = `${colorOption}-${sizeOption?.toLowerCase()}`;
-    const variantId = variantIds[selectedVariant];
-
-    if (!variantId) {
-      alert('Please select size and color');
-      return;
-    }
-
-    // Add main product to cart
-    const formData = new FormData();
-    formData.append('id', variantId);
-    formData.append('quantity', 1);
-
-    fetch('/cart/add.js', {
-      method: 'POST',
-      body: formData
-    })
-      .then(response => response.json())
-      .then(data => {
-        // Check if this is Black + Medium combination
-        if (colorOption === 'black' && sizeOption?.toLowerCase() === 'm') {
-          addSoftWinterJacket();
-        } else {
-          alert('Added to cart!');
-          closeModal();
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error adding to cart');
-      });
-  }
-
-  function addSoftWinterJacket() {
-    // Replace with actual "Soft Winter Jacket" variant ID
-    const winterJacketVariantId = 'SOFT_WINTER_JACKET_VARIANT_ID';
-
-    const formData = new FormData();
-    formData.append('id', winterJacketVariantId);
-    formData.append('quantity', 1);
-
-    fetch('/cart/add.js', {
-      method: 'POST',
-      body: formData
-    })
-      .then(response => response.json())
-      .then(data => {
-        alert('Added to cart! Soft Winter Jacket also added as bonus!');
-        closeModal();
-      })
-      .catch(error => {
-        console.error('Error adding winter jacket:', error);
-      });
-  }
 
   function addToCart() {
     // Get selected variant ID (you'll need to determine this based on color/size selection)
