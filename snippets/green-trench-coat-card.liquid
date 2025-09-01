@@ -1,254 +1,738 @@
-{% comment %}
-  Section: Green Trench Coat Card
-  Modal-friendly product detail card (fragment) with editable settings, designed to be fetched into a modal.
-{% endcomment %}
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{%- assign close_icon_url = section.settings.close_icon != blank 
-  ? section.settings.close_icon | image_url: width: 22 
-  : 'img_group_1000008134.svg' | asset_url -%}
+        body {
+            font-family: 'Jost', Arial, sans-serif;
+            background-color: #f0f0f0;
+            /* Light gray for card contrast; or use transparent */
+            line-height: 1.5;
+        }
 
-{%- assign dropdown_arrow_url = section.settings.dropdown_arrow != blank 
-  ? section.settings.dropdown_arrow | image_url: width: 24 
-  : 'img_arrow_down.svg' | asset_url -%}
 
-{%- assign cart_arrow_url = section.settings.cart_arrow != blank 
-  ? section.settings.cart_arrow | image_url: width: 48 
-  : 'img_line_15_white_a700.svg' | asset_url -%}
+        /* Layout components */
+        .product-container {
+            background-color: #ffffff;
+            box-shadow: 0px 2px 4px #00000033;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 12px 16px 24px 16px;
+        }
 
-{%- assign product_image_url = section.settings.product_image != blank 
-  ? section.settings.product_image | image_url: width: 800 
-  : 'img_image_825.png' | asset_url -%}
 
-<style>
-  /* Scoped namespace: gtc- (Green Trench Coat) */
-  .gtc-container { background:#fff; box-shadow:0 2px 4px #00000033; width:100%; max-width:400px; margin:0 auto; padding:12px 16px 24px 16px; font-family:'Jost', Arial, sans-serif; }
-  .gtc-content { display:flex; flex-direction:column; align-items:center; width:100%; }
-  .gtc-header { display:flex; flex-direction:column; align-items:center; width:100%; margin-bottom:16px; }
-  .gtc-image { width:45%; height:159px; object-fit:cover; margin-bottom:-2px; margin-right:16px; }
-  .gtc-info { display:flex; flex-direction:column; align-items:flex-start; flex:1; gap:16px; width:100%; }
-  .gtc-close { width:16px; height:11px; align-self:flex-end; margin-bottom:16px; cursor:pointer; }
+        .product-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
 
-  .gtc-details { display:flex; flex-direction:column; align-items:flex-start; width:100%; gap:10px; }
-  .gtc-title { font-size:14px; font-weight:300; line-height:18px; color:#000; }
-  .gtc-price { font-size:14px; font-family:'Lustria', serif; font-weight:400; line-height:16px; color:#000; }
-  .gtc-desc  { font-size:12px; font-weight:300; line-height:14px; color:#000; width:100%; }
+        .product-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 16px;
+        }
 
-  .gtc-color { display:flex; flex-direction:column; align-items:flex-start; width:100%; max-width:272px; gap:2px; margin-top:16px; }
-  .gtc-label { font-size:12px; font-weight:400; line-height:16px; color:#333; }
-  .gtc-color-row { display:flex; align-items:center; width:100%; border:1px solid #000; }
-  .gtc-color-opt { padding-right:79px; display:flex; align-items:center; cursor:pointer; transition:all .3s ease; }
-  .gtc-color-opt:hover { opacity:.8; }
-  .gtc-swatch { width:7px; height:32px; border:1px solid #000; }
-  .gtc-swatch--primary { background-color: {{ section.settings.color_primary | default: '#FFFFFF' }} !important; border-color:#000 !important; }
-  .gtc-swatch--secondary { background-color: {{ section.settings.color_secondary | default: '#000000' }} !important; border-color:#000 !important; }
-  .gtc-color-text { font-size:16px; font-weight:400; line-height:20px; color:#000; margin-left:8px; text-transform:capitalize; }
-  .gtc-color-opt.selected { background:#000; }
-  .gtc-color-opt.selected .gtc-color-text { color:#fff; }
 
-  .gtc-size { display:flex; flex-direction:column; align-items:flex-start; width:100%; max-width:272px; gap:2px; margin-top:8px; }
-  .gtc-sizebar { position:relative; width:100%; border:1px solid #000; display:flex; align-items:center; cursor:pointer; user-select:none; }
-  .gtc-size-text { padding-left:3%; font-size:14px; font-weight:400; line-height:18px; color:#000; margin:8px 0; flex:1; }
-  .gtc-size-ctrl { display:inline-flex; align-items:center; gap:8px; pointer-events:none; padding:0 8px; }
-  .gtc-size-line { width:1px; height:30px; background:#000; }
-  .gtc-arrow { width:12px; height:6px; transition:transform .25s; }
+        @media (min-width: 640px) {
+            .product-header {
+                flex-direction: row;
+                align-items: end;
+            }
 
-  .gtc-menu { position:absolute; top:110%; left:0; right:0; max-height:96px; overflow-y:auto; border:1px solid #000; background:#fff; box-shadow:0 6px 12px #0002; margin:6px 0 0; padding:0; list-style:none; display:none; z-index:1000; scrollbar-width:none; -ms-overflow-style:none; }
-  .gtc-menu::-webkit-scrollbar { display:none; }
-  .gtc-menu.show { display:block; }
-  .gtc-opt { padding:8px 12px; font-family:'Jost', Arial, sans-serif; font-size:14px; line-height:18px; border-bottom:1px solid #eee; cursor:pointer; }
-  .gtc-opt:last-child { border-bottom:none; }
-  .gtc-opt:hover, .gtc-opt.selected { background:#000; color:#fff; }
+            .product-image {
+                height: 159px;
+                width: 45%;
+                object-fit: cover;
+                margin-bottom: -2px;
+                margin-right: 16px;
+            }
 
-  .gtc-cta { display:flex; justify-content:flex-end; align-items:center; width:100%; max-width:272px; background:#000; padding:8px 30px; margin-top:40px; cursor:pointer; transition:all .3s ease; border:0; }
-  .gtc-cta:hover { background:#333; transform:translateY(-2px); }
-  .gtc-cta:active { transform:translateY(0); background:#555; }
-  .gtc-cta-text { font-size:14px; font-weight:400; line-height:18px; text-transform:uppercase; color:#fff; }
-  .gtc-cta-arrow { width:32px; height:1px; margin-left:28px; }
 
-  @media (min-width:640px) {
-    .gtc-header { flex-direction:row; align-items:end; }
-    .gtc-image { height:159px; width:45%; object-fit:cover; margin-bottom:-2px; margin-right:16px; }
-    .gtc-price { font-size:17px; }
-    .gtc-container { max-width:282px; }
-    .gtc-desc { font-size:14px; font-weight:200; }
-    .gtc-color { margin-top:-7px; }
-  }
+            .product-info {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                flex: 1;
+                gap: 16px;
+                width: 100%;
 
-  @media (min-width:768px) {
-    .gtc-title { font-size:16px; line-height:24px; }
-    .gtc-price { font-size:16px; line-height:21px; }
-    .gtc-desc { font-size:13px; line-height:15px; }
-    .gtc-image { height:184px; margin-left:8px; }
-    .gtc-cta { margin-top:50px; }
-    .gtc-color-opt { padding-right:90px; }
-    .gtc-cta-text { font-size:16px; line-height:24px; }
-    .gtc-swatch { height:40px; }
-    .gtc-size-text { font-size:16px; line-height:24px; padding-left:4%; }
-    .gtc-size-line { height:38px; }
-  }
+            }
 
-  @media (min-width:1024px) {
-    .gtc-color-opt { padding-right:100px; }
-    .gtc-container { max-width:350px; padding:20px 32px 40px 32px; }
-    .gtc-desc { font-size:12px !important; }
-    .gtc-image { height:152px !important; margin-left:5px !important; }
-  }
+            .close-button {
+                height: 11px;
+            }
 
-  @media (min-width:0px) and (max-width:639px) {
-    .gtc-header { flex-direction:row; }
-    .gtc-details { padding-top:31px; }
-    .gtc-container { max-width:330px !important; position:relative; }
-    .gtc-image { width:123px !important; height:122px !important; margin-bottom:-34px !important; padding-left:10px !important; }
-    .gtc-info { padding-left:7px !important; }
-    .gtc-desc { font-size:13px !important; }
-    .gtc-color { margin-top:0 !important; }
-    .gtc-close { position:absolute; top:10px; right:10px; z-index:10; }
-  }
-</style>
+        }
 
-<div class="gtc-container">
-  <div class="gtc-content">
-    <div class="gtc-header">
-      <img src="{{ product_image_url }}" alt="{{ section.settings.product_image.alt | escape | default: 'Product image' }}" class="gtc-image" />
-      <div class="gtc-info">
-        <!-- Keep .close-button for landing modal to bind -->
-        <img src="{{ close_icon_url }}" alt="Close" class="gtc-close close-button" />
-        <div class="gtc-details">
-          <h1 class="gtc-title">{{ section.settings.title | default: 'Green Trench Coat' }}</h1>
-          <p class="gtc-price">{{ section.settings.price | default: '980,00€' }}</p>
-          <p class="gtc-desc">{{ section.settings.description | default: 'This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief.' }}</p>
+        .close-button {
+            width: 16px;
+            height: 11px;
+            align-self: flex-end;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            gap: 10px;
+        }
+
+        /* Typography */
+        .product-title {
+            font-size: 14px;
+            font-family: 'Jost', Arial, sans-serif;
+            font-weight: 300;
+            line-height: 18px;
+            text-align: left;
+            color: #000000;
+            width: auto;
+        }
+
+        @media (min-width: 768px) {
+            .product-title {
+                font-size: 16px;
+                line-height: 24px;
+            }
+        }
+
+        .product-price {
+            font-size: 14px;
+            font-family: 'Lustria', serif;
+            font-weight: 400;
+            line-height: 16px;
+            text-align: left;
+            color: #000000;
+            width: auto;
+        }
+
+        @media (min-width: 768px) {
+            .product-price {
+                font-size: 16px;
+                line-height: 21px;
+            }
+        }
+
+        .product-description {
+            font-size: 12px;
+            font-family: 'Jost', Arial, sans-serif;
+            font-weight: 300;
+            line-height: 14px;
+            text-align: left;
+            color: #000000;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .product-description {
+                font-size: 13px;
+                line-height: 15px;
+            }
+
+            .product-image {
+                height: 184px;
+                margin-left: 8px;
+            }
+
+        }
+
+        /* Color selection */
+        .color-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 272px;
+            gap: 2px;
+            margin-top: 16px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-family: 'Jost', Arial, sans-serif;
+            font-weight: 400;
+            line-height: 16px;
+            text-align: left;
+            color: #333333;
+            width: auto;
+        }
+
+        @media (min-width: 768px) {
+            .section-label {
+                font-size: 14px;
+                line-height: 21px;
+            }
+        }
+
+        .color-options {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            border: 1px solid #000000;
+        }
+
+        .color-option {
+            padding-right: 79px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .color-option:hover {
+            opacity: 0.8;
+        }
+
+        .color-line {
+            width: 7px;
+            height: 32px;
+            border: 1px solid #000000;
+        }
+
+        @media (min-width: 768px) {
+            .color-line {
+                height: 40px;
+            }
+        }
+
+        .white-line {
+            background-color: #ffffff !important;
+        }
+
+        .black-line {
+            background-color: #000000;
+        }
+
+        .color-text {
+            font-size: 16px;
+            font-family: 'Jost', Arial, sans-serif;
+            font-weight: 400;
+            line-height: 20px;
+            text-align: left;
+            text-transform: capitalize;
+            color: #000000;
+            margin-left: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .color-text {
+                font-size: 18px;
+                line-height: 27px;
+            }
+        }
+
+        .black-option {
+            padding: 0 0px;
+            flex: 1;
+        }
+
+        /* Size selection */
+        .size-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 272px;
+            gap: 2px;
+            margin-top: 8px;
+        }
+
+        .size-dropdown {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            border: 0 solid #000000;
+            position: relative;
+        }
+
+        .size-text {
+            padding-left: 3%;
+            font-size: 14px;
+            font-family: 'Jost', Arial, sans-serif;
+            font-weight: 400;
+            line-height: 18px;
+            text-align: left;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .size-text {
+                font-size: 16px;
+                line-height: 24px;
+                padding-left: 4%;
+            }
+        }
+
+        .dropdown-controls {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            flex: 1;
+            padding: 0 8px;
+        }
+
+        .dropdown-line {
+            width: 1px;
+            height: 30px;
+            background-color: #000000;
+        }
+
+        @media (min-width: 768px) {
+            .dropdown-line {
+                height: 38px;
+            }
+        }
+
+        .dropdown-arrow {
+            width: 12px;
+            height: 6px;
+            margin-left: 20px;
+        }
+
+        /* Add to cart button */
+        .add-to-cart {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            width: 100%;
+            max-width: 272px;
+            background-color: #000000;
+            padding: 8px 30px;
+            margin-top: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            .add-to-cart {
+                margin-top: 50px;
+            }
+        }
+
+        .add-to-cart:hover {
+            background-color: #333333;
+            transform: translateY(-2px);
+        }
+
+        .add-to-cart:active {
+            transform: translateY(0);
+            background-color: #555555;
+        }
+
+        .cart-text {
+            font-size: 14px;
+            font-family: 'Jost', Arial, sans-serif;
+            font-weight: 400;
+            line-height: 18px;
+            text-align: center;
+            text-transform: uppercase;
+            color: #ffffff;
+        }
+
+        @media (min-width: 768px) {
+
+            .color-option {
+                padding-right: 90px;
+            }
+
+            .cart-text {
+                font-size: 16px;
+                line-height: 24px;
+            }
+        }
+
+        .cart-arrow {
+            width: 32px;
+            height: 1px;
+            margin-left: 28px;
+        }
+
+        /* Interactive states */
+        .color-option.selected .color-line {
+            border-width: 6px;
+        }
+
+        .size-dropdown:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Responsive media queries */
+        @media (min-width: 640px) {
+
+            .color-option {
+                padding-right: 79px;
+            }
+
+            .product-price {
+                font-size: 17px;
+            }
+
+            .product-container {
+                max-width: 282px;
+            }
+
+            .product-description {
+                font-size: 14px;
+                font-weight: 200;
+            }
+
+            .color-section {
+                margin-top: -7px;
+            }
+
+            .black-option {
+                padding: 0 0px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .product-container {
+                max-width: 347px;
+                padding: 16px 24px 32px 24px;
+            }
+
+            .black-option {
+                padding: 0 0px;
+            }
+
+            .color-section {
+                margin-top: -7px;
+            }
+
+
+        }
+
+        @media (min-width: 1024px) {
+
+            .color-option {
+                padding-right: 100px;
+            }
+
+            .product-container {
+                max-width: 350px;
+                padding: 20px 32px 40px 32px;
+            }
+
+            .product-description {
+                font-size: 12px !important;
+            }
+
+            .black-option {
+                padding: 0px 0px !important;
+            }
+
+            .color-section {
+                margin-top: -7px !important;
+            }
+
+            .product-image {
+                height: 152px !important;
+                margin-left: 5px !important;
+            }
+
+        }
+
+        /* 1 ─ White swatch must actually be white */
+        .color-line.white-line {
+            background-color: #000000 !important;
+            /* remove inherited black fill  */
+            border: 1px solid #000000 !important;
+            /* thin outline so it’s visible */
+        }
+
+        /* 2 ─ Give the “Choose your size” bar a black border */
+        .size-dropdown {
+            border: 1px solid #000 !important;
+        }
+
+        @media(min-width: 0px) and (max-width: 639px) {
+
+            .size-section {
+                margin-top: 12px;
+            }
+
+            .product-header {
+                flex-direction: row;
+            }
+
+            .product-details {
+                padding-top: 31px;
+            }
+
+
+            .product-container {
+                max-width: 330px !important;
+            }
+
+            .product-image {
+                width: 123px !important;
+                height: 122px !important;
+                margin-bottom: -34px !important;
+                padding-left: 10px !important;
+            }
+
+            .product-info {
+                padding-left: 7px !important;
+            }
+
+            .product-description {
+                font-size: 13px !important;
+            }
+
+            .color-section {
+                margin-top: 0px !important;
+            }
+
+            .black-option {
+                padding: 0px 0px !important;
+            }
+
+            .product-container {
+                position: relative;
+                /* Ensures .close-button positions relative to the card */
+            }
+
+            .close-button {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                z-index: 10;
+                cursor: pointer;
+            }
+
+        }
+
+        /* ——— base bar (you already have most of this) ——— */
+        .size-dropdown {
+            position: relative;
+            width: 100%;
+            cursor: pointer;
+            user-select: none
+        }
+
+        .dropdown-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none
+        }
+
+        .dropdown-arrow {
+            width: 12px;
+            height: 6px;
+            transition: transform .25s
+        }
+
+        /* ——— menu ——— */
+        .dropdown-menu {
+            position: absolute;
+            top: 110%;
+            left: 0;
+            right: 0;
+            max-height: 96px;
+            /* ≈3×32-px rows */
+            overflow-y: auto;
+            border: 1px solid #000;
+            background: #fff;
+            box-shadow: 0 6px 12px #0002;
+            margin: 6px 0 0;
+            padding: 0;
+            list-style: none;
+            display: none;
+            z-index: 1000
+        }
+
+        /* hide scrollbars (Chrome/Safari/Firefox/Edge) */
+        .dropdown-menu {
+            scrollbar-width: none;
+            /* Firefox    */
+            -ms-overflow-style: none;
+            /* IE 10/11   */
+        }
+
+        .dropdown-menu::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* WebKit */
+
+
+        .dropdown-menu.show {
+            display: block
+        }
+
+        .dropdown-option {
+            padding: 8px 12px;
+            font-family: 'Jost', Arial, sans-serif;
+            font-size: 14px;
+            line-height: 18px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer
+        }
+
+        .dropdown-option:last-child {
+            border-bottom: none
+        }
+
+        .dropdown-option:hover,
+        .dropdown-option.selected {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Add these for selected state visuals (background black, text white) */
+        .color-option.selected {
+            background-color: #000000;
+        }
+
+        .color-option.selected .color-text {
+            color: #ffffff;
+        }
+
+        /* Ensure grey line border matches its background (prevents turning black when thickened) */
+        /* .color-line.black-line {
+            border: 1px solid #000000 !important;
+        } */
+
+        .color-line.white-line {
+            background-color: #ffffff !important;
+        }
+    </style>
+    <div class="product-container">
+        <div class="product-content">
+            <div class="product-header">
+                <img src="{{'img_image_825.png'|asset_url}}" alt="Tailored Jacket" class="product-image" />
+                <div class="product-info">
+                    <img src="{{'img_group_1000008134.svg'|asset_url}}" alt="Close" class="close-button" />
+                    <div class="product-details">
+                        <h1 class="product-title">Green Trench Coat</h1>
+                        <p class="product-price">980,00€</p>
+                        <p class="product-description">This one-piece swimsuit is crafted from jersey featuring an
+                            allover micro Monogram motif in relief.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="color-section">
+                <label class="section-label">Color</label>
+                <div class="color-options">
+                    <div class="slider"></div>
+                    <div class="color-option">
+                        <div class="color-line white-line"></div>
+                        <span class="color-text">White</span>
+                    </div>
+                    <div class="color-option black-option">
+                        <div class="color-line black-line"></div>
+                        <span class="color-text">Black</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="size-section">
+                <label class="section-label">Size</label>
+                <div class="size-dropdown" id="sizeDropdown" tabindex="0">
+                    <span class="size-text" id="sizeLabel">Choose your size</span>
+
+                    <div class="dropdown-controls">
+                        <div class="dropdown-line"></div>
+                        <img src="{{'img_arrow_down.svg'|asset_url}}" alt="toggle" class="dropdown-arrow"
+                            id="sizeArrow">
+                    </div>
+
+                    <ul class="dropdown-menu" id="sizeMenu">
+                        <li class="dropdown-option">XS</li>
+                        <li class="dropdown-option">S</li>
+                        <li class="dropdown-option">M</li>
+                        <li class="dropdown-option">L</li>
+                        <li class="dropdown-option">XL</li>
+                    </ul>
+                </div>
+            </div>
+
+            <button class="add-to-cart" onclick="addToCart()">
+                <span class="cart-text">Add to cart</span>
+                <img src="{{'img_line_15_white_a700.svg'|asset_url}}" alt="Arrow" class="cart-arrow" />
+            </button>
         </div>
-      </div>
     </div>
-
-    <div class="gtc-color">
-      <label class="gtc-label">{{ section.settings.color_label | default: 'Color' }}</label>
-      <div class="gtc-color-row">
-        <div class="gtc-color-opt">
-          <div class="gtc-swatch gtc-swatch--primary"></div>
-          <span class="gtc-color-text">{{ section.settings.color_primary_label | default: 'White' }}</span>
-        </div>
-        <div class="gtc-color-opt" style="flex:1;">
-          <div class="gtc-swatch gtc-swatch--secondary"></div>
-          <span class="gtc-color-text">{{ section.settings.color_secondary_label | default: 'Black' }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="gtc-size">
-      <label class="gtc-label">{{ section.settings.size_label | default: 'Size' }}</label>
-      <div class="gtc-sizebar" id="gtcSizeBar" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
-        <span class="gtc-size-text" id="gtcSizeText">{{ section.settings.size_prompt | default: 'Choose your size' }}</span>
-        <div class="gtc-size-ctrl">
-          <div class="gtc-size-line"></div>
-          <img src="{{ dropdown_arrow_url }}" alt="toggle" class="gtc-arrow" id="gtcArrow">
-        </div>
-        <ul class="gtc-menu" id="gtcMenu" role="listbox" aria-label="Size options">
-          {%- assign size_list = section.settings.sizes | default: 'XS,S,M,L,XL' | split: ',' -%}
-          {%- for s in size_list -%}
-            {%- assign s_trim = s | strip -%}
-            <li class="gtc-opt" role="option" aria-selected="false">{{ s_trim }}</li>
-          {%- endfor -%}
-        </ul>
-      </div>
-    </div>
-
-    <button class="gtc-cta" type="button" id="gtcAddToCart">
-      <span class="gtc-cta-text">{{ section.settings.cta_label | default: 'Add to cart' }}</span>
-      <img src="{{ cart_arrow_url }}" alt="Arrow" class="gtc-cta-arrow" />
-    </button>
-  </div>
-</div>
-
 <script>
-  (function() {
-    // Size dropdown
-    var bar = document.getElementById('gtcSizeBar');
-    var menu = document.getElementById('gtcMenu');
-    var label = document.getElementById('gtcSizeText');
-    var arrow = document.getElementById('gtcArrow');
-    var open = false;
+    const dropdown = document.getElementById('sizeDropdown');
+    const menu = document.getElementById('sizeMenu');
+    const label = document.getElementById('sizeLabel');
+    const arrow = document.getElementById('sizeArrow');
 
-    function openMenu() { open = true; menu.classList.add('show'); arrow.style.transform = 'rotate(180deg)'; bar.setAttribute('aria-expanded', 'true'); }
-    function closeMenu() { open = false; menu.classList.remove('show'); arrow.style.transform = 'rotate(0deg)'; bar.setAttribute('aria-expanded', 'false'); }
+    let open = false;
+
+    function openMenu() {
+        open = true;
+        menu.classList.add('show');
+        arrow.style.transform = 'rotate(180deg)';
+    }
+
+    function closeMenu() {
+        open = false;
+        menu.classList.remove('show');
+        arrow.style.transform = 'rotate(0deg)';
+    }
+
     function toggleMenu() { open ? closeMenu() : openMenu(); }
 
-    if (bar) {
-      bar.addEventListener('click', function(e){ e.stopPropagation(); toggleMenu(); });
-      window.addEventListener('click', function(){ if (open) closeMenu(); });
-      window.addEventListener('keydown', function(e){
-        if (e.key === 'Escape' && open) closeMenu();
-        if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === bar) { e.preventDefault(); toggleMenu(); }
-      });
-    }
-
-    if (menu) {
-      menu.querySelectorAll('.gtc-opt').forEach(function(opt){
-        opt.addEventListener('click', function(e){
-          e.stopPropagation();
-          label.textContent = opt.textContent;
-          menu.querySelectorAll('.gtc-opt').forEach(function(o){ o.classList.remove('selected'); o.setAttribute('aria-selected','false'); });
-          opt.classList.add('selected');
-          opt.setAttribute('aria-selected','true');
-          closeMenu();
-        });
-      });
-    }
-
-    // Color selection
-    var colorOpts = document.querySelectorAll('.gtc-color-opt');
-    colorOpts.forEach(function(opt){
-      opt.addEventListener('click', function(){
-        colorOpts.forEach(function(o){ o.classList.remove('selected'); });
-        opt.classList.add('selected');
-      });
+    /* open / close when the bar is clicked */
+    dropdown.addEventListener('click', e => {
+        e.stopPropagation();
+        toggleMenu();
     });
 
-    // Add to cart placeholder: emit event for host page handler
-    var addBtn = document.getElementById('gtcAddToCart');
-    if (addBtn) {
-      addBtn.addEventListener('click', function(){
-        var evt = new CustomEvent('gtc:add-to-cart', {
-          detail: {
-            title: '{{ section.settings.title | escape }}',
-            price: '{{ section.settings.price | escape }}',
-            size: label ? label.textContent : null
-          }
+    /* pick a size → update label, highlight, close */
+    menu.querySelectorAll('.dropdown-option').forEach(opt => {
+        opt.addEventListener('click', e => {
+            e.stopPropagation();  // <— this stops bubbling and prevents re-toggle
+            label.textContent = opt.textContent;
+            menu.querySelectorAll('.dropdown-option')
+                .forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            closeMenu();
         });
-        window.dispatchEvent(evt);
-      });
-    }
-  })();
+    });
+
+    /* click outside or Esc closes menu */
+    window.addEventListener('click', () => open && closeMenu());
+    window.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && open) closeMenu();
+        if ((e.key === 'Enter' || e.key === ' ') &&
+            document.activeElement === dropdown) {
+            e.preventDefault();
+            toggleMenu();
+        }
+    });
+
+    // Color selection handling
+    const colorOptions = document.querySelectorAll('.color-option');
+
+    colorOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Remove 'selected' from all options
+            colorOptions.forEach(opt => opt.classList.remove('selected'));
+            // Add 'selected' to the clicked option
+            option.classList.add('selected');
+        });
+    });
+
 </script>
-
-{% schema %}
-{
-  "name": "Green Trench Coat Card",
-  "settings": [
-    { "type": "image_picker", "id": "product_image", "label": "Product image" },
-    { "type": "text", "id": "title", "label": "Title", "default": "Green Trench Coat" },
-    { "type": "text", "id": "price", "label": "Price", "default": "980,00€" },
-    { "type": "textarea", "id": "description", "label": "Description", "default": "This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief." },
-
-    { "type": "image_picker", "id": "close_icon", "label": "Close icon" },
-    { "type": "image_picker", "id": "dropdown_arrow", "label": "Dropdown arrow icon" },
-    { "type": "image_picker", "id": "cart_arrow", "label": "Cart arrow icon" },
-
-    { "type": "text", "id": "color_label", "label": "Color label", "default": "Color" },
-    { "type": "text", "id": "color_primary_label", "label": "Primary color label", "default": "White" },
-    { "type": "color", "id": "color_primary", "label": "Primary color swatch", "default": "#FFFFFF" },
-    { "type": "text", "id": "color_secondary_label", "label": "Secondary color label", "default": "Black" },
-    { "type": "color", "id": "color_secondary", "label": "Secondary color swatch", "default": "#000000" },
-
-    { "type": "text", "id": "size_label", "label": "Size label", "default": "Size" },
-    { "type": "text", "id": "size_prompt", "label": "Size prompt", "default": "Choose your size" },
-    { "type": "text", "id": "sizes", "label": "Sizes (comma-separated)", "default": "XS,S,M,L,XL" },
-
-    { "type": "text", "id": "cta_label", "label": "Button text", "default": "Add to cart" }
-  ],
-  "blocks": [],
-  "presets": [
-    { "name": "Green Trench Coat Card" }
-  ]
-}
-{% endschema %}
