@@ -1,10 +1,9 @@
 {
-  "type": "main-page",
   "sections": {
-    "tisso-vison-gift-guide": {
-      "type": "tisso-vison-gift-guide",
+    "main": {
+      "type": "gift-guide-landing",
       "settings": {}
     }
   },
-  "order": ["tisso-vison-gift-guide"]
+  "order": ["main"]
 }

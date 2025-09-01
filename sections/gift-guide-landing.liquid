@@ -1,0 +1,425 @@
+{% comment %}
+  Section: Gift Guide Landing
+  Converts the provided static HTML/CSS/JS into a configurable Shopify section.
+  - Editable settings for texts, images, links, logos, and overlay positions
+  - Gallery rendered from blocks (up to 6)
+  - Modal loads external HTML card via fetch from a provided URL per block
+{% endcomment %}
+
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&family=Lustria:wght@400&display=swap" rel="stylesheet">
+
+{%- comment -%}
+  Resolve image and icon URLs with fallbacks to theme assets
+{%- endcomment -%}
+{%- if section.settings.hamburger_icon != blank -%}
+  {%- assign hamburger_icon_url = section.settings.hamburger_icon | image_url: width: 48 -%}
+{%- else -%}
+  {%- assign hamburger_icon_url = 'img_group_1000008115.svg' | asset_url -%}
+{%- endif -%}
+
+{%- if section.settings.logo1 != blank -%}
+  {%- assign logo1_url = section.settings.logo1 | image_url: width: 128 -%}
+{%- else -%}
+  {%- assign logo1_url = 'img_group_1000007776.svg' | asset_url -%}
+{%- endif -%}
+
+{%- if section.settings.logo2 != blank -%}
+  {%- assign logo2_url = section.settings.logo2 | image_url: width: 148 -%}
+{%- else -%}
+  {%- assign logo2_url = 'img_group_1000007775.svg' | asset_url -%}
+{%- endif -%}
+
+{%- if section.settings.cta_arrow_black != blank -%}
+  {%- assign cta_arrow_black_url = section.settings.cta_arrow_black | image_url: width: 48 -%}
+{%- else -%}
+  {%- assign cta_arrow_black_url = 'img_line_15_black_900.svg' | asset_url -%}
+{%- endif -%}
+
+{%- if section.settings.shop_arrow != blank -%}
+  {%- assign shop_arrow_url = section.settings.shop_arrow | image_url: width: 48 -%}
+{%- else -%}
+  {%- assign shop_arrow_url = 'img_line_15.svg' | asset_url -%}
+{%- endif -%}
+
+{%- comment -%}
+  Backgrounds for mobile hero CTA band and desktop hero
+{%- endcomment -%}
+{%- if section.settings.mobile_hero_bg != blank -%}
+  {%- assign mobile_hero_bg_url = section.settings.mobile_hero_bg | image_url: width: 1600 -%}
+{%- else -%}
+  {%- assign mobile_hero_bg_url = 'img_frame.png' | asset_url -%}
+{%- endif -%}
+
+{%- if section.settings.desktop_hero_bg != blank -%}
+  {%- assign desktop_hero_bg_url = section.settings.desktop_hero_bg | image_url: width: 2400 -%}
+{%- else -%}
+  {%- assign desktop_hero_bg_url = 'img_group_1000008197.svg' | asset_url -%}
+{%- endif -%}
+
+<style>
+  /* Reset and base styles */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Jost', sans-serif; background-color: #ffffff; line-height: 1.5; }
+  img { max-width: 100%; height: auto; display: block; }
+  button { border: none; cursor: pointer; font-family: inherit; }
+
+  /* Mobile-first base styles (default/mobile) */
+  .gift-guide__main { width: 100%; background-color: #ffffff; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .gift-guide__header { width: 100%; background-color: #f7f7f7; box-shadow: 0px 2px 4px #00000026; padding: 22px 16px; }
+  .gift-guide__header-inner { width: 100%; max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+  .gift-guide__hamburger { width: 18px; height: 10px; cursor: pointer; transition: transform 0.3s ease; display: block; }
+  .gift-guide__hamburger:hover { transform: scale(1.1); }
+  .gift-guide__logo-wrap { display: flex; align-items: center; gap: 12px; flex: 1; justify-content: center; padding: 0 56px; }
+  .gift-guide__logo1 { width: 64px; height: 18px; }
+  .gift-guide__logo2 { width: 74px; height: 18px; }
+  .gift-guide__tagline { font-size: 12px; font-weight: 400; line-height: 18px; text-align: center; color: #000; display: none; }
+  .gift-guide__cta { display: none; }
+
+  .gift-guide__content { width: 100%; background-color: #fff; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .gift-guide__content-inner { width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 16px; }
+
+  .gift-guide__hero { width: 100%; background-color: #fff; display: none; }
+  .gift-guide__hero-title { font-size: 24px; font-weight: 500; line-height: 32px; text-align: center; color: #000; margin-top: 36px; margin-bottom: 12px; }
+  .gift-guide__hero-desc { font-size: 14px; font-weight: 400; line-height: 18px; text-align: center; color: #000; margin-bottom: 24px; padding: 0 16px; }
+  .gift-guide__hero-cta {
+    width: 100%;
+    background-image: url('{{ mobile_hero_bg_url }}');
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    padding: 38px; display: flex; justify-content: center; align-items: flex-end; min-height: 200px; margin-bottom: 12px;
+  }
+  .gift-guide__shop-btn {
+    background-color: #000; color: #f4f4f4; font-size: 14px; font-weight: 400; line-height: 20px; text-align: center; text-transform: uppercase;
+    padding: 8px 34px; border-radius: 0; display: flex; align-items: center; gap: 24px; transition: all 0.3s ease; margin-top: 140px; width: 64%;
+    justify-content: center; text-decoration: none;
+  }
+  .gift-guide__shop-btn:hover { background-color: #333; transform: translateY(-2px); }
+  .gift-guide__shop-btn:active { transform: translateY(0); }
+  .gift-guide__shop-arrow { width: 24px; height: 12px; }
+
+  .gift-guide__ribbon { width: 100%; background-color: #f4f4f4; font-size: 12px; line-height: 18px; text-align: center; color: #000; padding: 4px 34px; margin-bottom: 22px; }
+  .gift-guide__ribbon-inner { display: flex; justify-content: center; align-items: center; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0; }
+
+  .gift-guide__gallery { width: 100%; padding: 0 16px; margin-bottom: 22px; }
+  .gift-guide__gallery-inner { width: 100%; max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .gift-guide__gallery-title { font-size: 20px; font-family: 'Lustria', serif; font-weight: 400; line-height: 26px; text-align: center; color: #000; margin-bottom: 12px; }
+  .gift-guide__grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .gift-guide__item { position: relative; width: 100%; aspect-ratio: 168/186; overflow: hidden; cursor: pointer; transition: transform 0.3s ease; }
+  .gift-guide__item:hover { transform: scale(1.02); }
+  .gift-guide__item img { width: 100%; height: 100%; object-fit: cover; }
+  .gift-guide__overlay { position: absolute; top: 18px; right: 52px; width: 14px; height: 14px; background-image: url('{{ 'img_group_1000008196.svg' | asset_url }}'); background-size: contain; background-repeat: no-repeat; z-index: 2; transition: transform 0.3s ease; }
+  .gift-guide__item:hover .gift-guide__overlay { transform: scale(1.2); }
+
+  /* Tablet and larger screens */
+  @media (min-width: 640px) {
+    .gift-guide__main { gap: 60px; }
+    .gift-guide__header { background-color: #f4f4f4; box-shadow: none; padding: 10px 32px; }
+    .gift-guide__header-inner { justify-content: space-between; }
+    .gift-guide__hamburger { display: none; }
+    .gift-guide__logo-wrap { gap: 8px; justify-content: flex-start; padding: 0; flex: none; width: auto; }
+    .gift-guide__logo1 { width: 48px; height: 13px; }
+    .gift-guide__logo2 { width: 55px; height: 13px; }
+    .gift-guide__tagline { display: block; font-size: 14px; line-height: 20px; }
+    .gift-guide__cta { display: flex; gap: 12px; justify-content: center; align-items: center; padding: 6px; background-color: #fff444; text-decoration: none; transition: all 0.3s ease; }
+    .gift-guide__cta-text { font-size: 14px; font-weight: 400; line-height: 20px; text-align: center; text-transform: uppercase; color: #000; }
+    .gift-guide__cta-arrow { width: 20px; height: 1px; }
+    .gift-guide__cta:hover { background-color: #e6d000; transform: scale(1.02); }
+
+    .gift-guide__content { display: none; }
+    .gift-guide__hero { width: 100%; background-color: #fff; display: block; }
+    .gift-guide__hero-bg { display: flex; justify-content: flex-start; align-items: center; width: 100%; background-image: url('{{ desktop_hero_bg_url }}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 500px; }
+    .gift-guide__hero-inner { display: flex; justify-content: flex-start; align-items: flex-end; width: 100%; max-width: 1440px; margin: 0 auto; padding: 40px 32px; }
+    .gift-guide__hero-text { display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; width: 100%; margin-top: 200px; margin-left: 16px; margin-right: 16px; }
+    .gift-guide__hero-title { font-size: 56px; line-height: 80px; text-align: left; margin-top: 0; margin-bottom: 0; }
+    .gift-guide__hero-desc { font-size: 18px; line-height: 24px; text-align: left; width: 60%; margin-top: 20px; margin-bottom: 0; padding: 0; }
+    .gift-guide__shop-btn { font-size: 15px; line-height: 22px; gap: 20px; padding: 9px 28px 9px 11px; margin-top: 40px; width: auto; color: #fff; }
+    .gift-guide__ribbon { background-color: #f4f4f4; font-size: 14px; line-height: 20px; padding: 16px; margin-bottom: 0; }
+    .gift-guide__ribbon-inner { padding: 16px; }
+
+    .gift-guide__gallery-title { font-size: 30px; line-height: 40px; text-align: left; }
+    .gift-guide__gallery-inner { align-items: flex-start; gap: 20px; }
+    .gift-guide__grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .gift-guide__item { aspect-ratio: 432/444; }
+
+    /* Desktop overlay positions (shown on larger screens) */
+    .gift-guide__overlay { width: 22px; height: 22px; top: auto; right: auto; }
+    .overlay-1 { display: block; bottom: 120px; right: 100px; }
+    .overlay-2 { display: block; top: 50%; right: 40px; transform: translateY(-50%); }
+    .overlay-3 { display: block; top: 60px; right: 120px; }
+    .overlay-4 { display: block; top: 50px; right: 80px; }
+    .overlay-5 { display: block; top: 80px; left: 50%; right: auto; transform: translateX(-50%); }
+    .overlay-6 { display: block; top: 120px; right: 70px; }
+  }
+
+  @media (min-width: 768px) {
+    .gift-guide__main { gap: 70px; }
+    .gift-guide__header-inner { padding: 10px 40px; }
+    .gift-guide__logo-wrap { gap: 10px; }
+    .gift-guide__logo1 { width: 56px; height: 16px; }
+    .gift-guide__logo2 { width: 65px; height: 16px; }
+    .gift-guide__tagline { font-size: 15px; line-height: 22px; }
+    .gift-guide__cta-text { font-size: 15px; line-height: 22px; }
+    .gift-guide__hero-bg { min-height: 500px; }
+    .gift-guide__hero-inner { padding: 45px 40px; }
+    .gift-guide__hero-title { font-size: 63px; line-height: 90px; }
+    .gift-guide__hero-desc { font-size: 19px; line-height: 26px; width: 50%; margin-top: 24px; }
+    .gift-guide__shop-btn { font-size: 15px; line-height: 23px; padding: 9px 30px 9px 11px; margin-top: 45px; }
+    .gift-guide__ribbon-inner { padding: 20px; }
+    .gift-guide__ribbon p { font-size: 15px; line-height: 22px; }
+    .gift-guide__gallery { padding: 0 32px; margin-bottom: 40px; }
+    .gift-guide__gallery-inner { gap: 22px; }
+    .gift-guide__gallery-title { font-size: 32px; line-height: 42px; }
+    .gift-guide__grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  }
+
+  @media (min-width: 1024px) {
+    .gift-guide__main { gap: 80px; }
+    .gift-guide__header-inner { padding: 10px 50px; }
+    .gift-guide__logo-wrap { gap: 12px; }
+    .gift-guide__logo1 { width: 64px; height: 18px; }
+    .gift-guide__logo2 { width: 74px; height: 18px; }
+    .gift-guide__tagline { font-size: 16px; line-height: 24px; }
+    .gift-guide__cta { gap: 18px; padding: 8px; }
+    .gift-guide__cta-text { font-size: 16px; line-height: 24px; }
+    .gift-guide__cta-arrow { display: block; width: 24px; height: 1px; }
+    .gift-guide__hero-bg { min-height: 600px; }
+    .gift-guide__hero-inner { padding: 50px; }
+    .gift-guide__hero-text { margin-top: 280px; }
+    .gift-guide__hero-title { font-size: 70px; line-height: 102px; }
+    .gift-guide__hero-desc { font-size: 20px; line-height: 28px; width: 36%; margin-top: 32px; }
+    .gift-guide__shop-btn { font-size: 16px; line-height: 24px; gap: 28px; padding: 10px 36px 10px 12px; margin-top: 50px; width: 16%; }
+    .gift-guide__shop-arrow { width: 24px; height: 12px; }
+    .gift-guide__ribbon p { font-size: 16px; line-height: 24px; }
+    .gift-guide__gallery { padding: 0 50px; margin-bottom: 50px; }
+    .gift-guide__gallery-inner { gap: 26px; }
+    .gift-guide__gallery-title { font-size: 36px; line-height: 47px; }
+
+    /* Button hover effects */
+    .button-choose, .button-shop {
+      position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 12px; padding: 12px 36px;
+      font-family: 'Jost', sans-serif; font-weight: 500; font-size: 18px; letter-spacing: 0.5px; border: none; outline: none; cursor: pointer; z-index: 0; transition: color 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    .button-choose { background: #fff444; color: #000; }
+    .button-shop { background: #000; color: #fff; }
+    .button-choose::before, .button-shop::before {
+      content: ""; position: absolute; z-index: 1; top: 0; left: 0; height: 100%; width: 100%; transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .button-choose::before { background: #000; }
+    .button-shop::before { background: #fff444; }
+    .button-choose:hover::before, .button-shop:hover::before { transform: translateX(0); }
+    .button-choose:hover, .button-choose:focus { color: #fff; transition: color 0.20s 0.12s cubic-bezier(0.4,0,0.2,1); }
+    .button-shop:hover, .button-shop:focus { color: #000; transition: color 0.20s 0.12s cubic-bezier(0.4,0,0.2,1); }
+    .button-choose > *, .button-shop > * { position: relative; z-index: 2; transition: color 0.2s cubic-bezier(0.4,0,0.2,1); }
+    .button-choose:hover .cta-arrow, .button-choose:hover .c-arrow { filter: brightness(0) invert(1) !important; }
+    .button-shop:hover .gift-guide__shop-arrow[src$="img_line_15.svg"] { filter: brightness(0) invert(1) !important; }
+  }
+
+  /* 1) Keep “Shop Now” on one line */
+  .gift-guide__shop-btn { width: auto; gap: 12px; flex-wrap: nowrap; }
+  .gift-guide__shop-btn span { white-space: nowrap; }
+
+  /* 2) Close the gap between header and banner */
+  .gift-guide__main { gap: 20px; }
+  .gift-guide__hero-cta .gift-guide__shop-btn { margin-top: 40px; }
+
+  /* 3) Slim the sustainability ribbon */
+  .gift-guide__ribbon { padding: 6px 16px; font-size: 12px; }
+  @media (min-width: 1024px) {
+    .gift-guide__header { padding-top: 4px !important; padding-bottom: 4px !important; }
+    .gift-guide__ribbon { padding-top: 2px !important; padding-bottom: 2px !important; font-size: 10px !important; }
+  }
+
+  /* Modal Overlay */
+  .gift-guide__modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease; }
+  .gift-guide__modal.active { display: flex; opacity: 1; }
+  .gift-guide__card { background-color: #fff; box-shadow: 0px 2px 4px #00000033; max-width: 400px; padding: 12px 16px 24px 16px; border-radius: 8px; position: relative; transform: scale(0.9); transition: transform 0.3s ease; }
+  .gift-guide__modal.active .gift-guide__card { transform: scale(1); }
+</style>
+
+<div class="gift-guide__main">
+  <!-- Header -->
+  <header class="gift-guide__header">
+    <div class="gift-guide__header-inner">
+      <img src="{{ hamburger_icon_url }}" alt="Menu" class="gift-guide__hamburger" />
+      <div class="gift-guide__logo-wrap">
+        <img src="{{ logo1_url }}" alt="Tisso" class="gift-guide__logo1" />
+        <img src="{{ logo2_url }}" alt="Vison" class="gift-guide__logo2" />
+      </div>
+      <p class="gift-guide__tagline">{{ section.settings.tagline | escape }}</p>
+      {%- if section.settings.show_cta -%}
+        <a href="{{ section.settings.shop_link | default: routes.all_products_collection_url }}" class="gift-guide__cta button-choose">
+          <span class="gift-guide__cta-text">choose gift</span>
+          <img src="{{ cta_arrow_black_url }}" alt="Arrow" class="c-arrow" />
+        </a>
+      {%- endif -%}
+    </div>
+  </header>
+
+  <!-- Mobile Content (visible on mobile only) -->
+  <main class="gift-guide__content">
+    <div class="gift-guide__content-inner">
+      <h1 class="gift-guide__hero-title">{{ section.settings.hero_title | default: 'The Gift Guide' }}</h1>
+      <p class="gift-guide__hero-desc">{{ section.settings.hero_desc | default: 'Discover Joy: Your Ultimate Holiday Gift Destination.' }}</p>
+      <div class="gift-guide__hero-cta">
+        <a href="{{ section.settings.shop_link | default: routes.all_products_collection_url }}" class="gift-guide__shop-btn button-shop">
+          <span>Shop Now</span>
+          <img src="{{ shop_arrow_url }}" alt="Arrow" class="gift-guide__shop-arrow" />
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Desktop Hero (visible on tablet/desktop only) -->
+  <section class="gift-guide__hero">
+    <div class="gift-guide__hero-bg">
+      <div class="gift-guide__hero-inner">
+        <div class="gift-guide__hero-text">
+          <h1 class="gift-guide__hero-title">{{ section.settings.hero_title | default: 'The Gift Guide' }}</h1>
+          <p class="gift-guide__hero-desc">
+            {{ section.settings.hero_rich_desc | default: 'Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight loved ones this holiday season.' }}
+          </p>
+          <a href="{{ section.settings.shop_link | default: routes.all_products_collection_url }}" class="gift-guide__shop-btn button-shop">
+            <span>Shop Now</span>
+            <svg class="gift-guide__shop-arrow" width="28" height="12" viewBox="0 0 28 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.777569 4.94839L8.12771e-08 4.94839L-8.12771e-08 6.50353L0.777569 6.50353L0.777569 5.72596L0.777569 4.94839ZM27.7722 6.27579C28.0759 5.97213 28.0759 5.4798 27.7722 5.17614L22.8238 0.227724C22.5202 -0.0759358 22.0278 -0.0759358 21.7242 0.227724C21.4205 0.531383 21.4205 1.02371 21.7242 1.32737L26.1228 5.72596L21.7242 10.1246C21.4205 10.4282 21.4205 10.9205 21.7242 11.2242C22.0278 11.5279 22.5202 11.5279 22.8238 11.2242L27.7722 6.27579ZM0.777569 5.72596L0.777569 6.50353L27.2224 6.50353L27.2224 5.72596L27.2224 4.9484L0.777569 4.94839L0.777569 5.72596Z" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sustainability Ribbon -->
+  <section class="gift-guide__ribbon">
+    <div class="gift-guide__ribbon-inner">
+      <p>{{ section.settings.sustain_text | default: 'SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL' }}</p>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="gift-guide__gallery">
+    <div class="gift-guide__gallery-inner">
+      <h2 class="gift-guide__gallery-title">{{ section.settings.gallery_title | default: 'Tisso vison in the wild' }}</h2>
+      <div class="gift-guide__grid">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'gallery_item' -%}
+            <div class="gift-guide__item" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                <img src="{{ block.settings.image | image_url: width: 1200 }}" alt="{{ block.settings.image.alt | escape | default: 'Fashion lifestyle' }}">
+              {%- else -%}
+                {%- assign fallback = 'img_image_83' | append: forloop.index0 | append: '.png' -%}
+                <img src="{{ fallback | asset_url }}" alt="Fashion lifestyle">
+              {%- endif -%}
+              {%- assign overlay_class = block.settings.overlay_position | default: 'overlay-1' -%}
+              <div class="gift-guide__overlay {{ overlay_class }}"
+                   data-card-file="{% if block.settings.card_asset_url != blank %}{{ block.settings.card_asset_url }}{% else %}{{ 'OrangeWideLegProductDetails.html' | asset_url }}{% endif %}">
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Modal -->
+<div class="gift-guide__modal" id="giftGuideModal">
+  <div class="gift-guide__card" id="giftGuideModalContent"></div>
+</div>
+
+<script>
+  (function() {
+    const modalOverlay = document.getElementById('giftGuideModal');
+    const modalContent = document.getElementById('giftGuideModalContent');
+    const imageOverlays = document.querySelectorAll('.gift-guide__overlay');
+
+    function openCard(url) {
+      if (!url) return;
+      fetch(url)
+        .then(function(response) {
+          if (!response.ok) throw new Error('File not found: ' + url);
+          return response.text();
+        })
+        .then(function(data) {
+          modalContent.innerHTML = data;
+          modalOverlay.classList.add('active');
+          const closeBtn = modalContent.querySelector('.close-button');
+          if (closeBtn) closeBtn.addEventListener('click', closeModal);
+          const scripts = modalContent.getElementsByTagName('script');
+          for (let i = 0; i < scripts.length; i++) {
+            try { eval(scripts[i].innerText); } catch(e) { console.warn('Card script error', e); }
+          }
+        })
+        .catch(function(error) { console.error('Error loading card:', error); });
+    }
+
+    imageOverlays.forEach(function(overlay) {
+      overlay.addEventListener('click', function() {
+        const filePath = overlay.getAttribute('data-card-file');
+        openCard(filePath);
+      });
+    });
+
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+      modalContent.innerHTML = '';
+    }
+
+    modalOverlay.addEventListener('click', function(e) { if (e.target === modalOverlay) closeModal(); });
+    window.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Gift Guide Landing",
+  "settings": [
+    { "type": "text", "id": "tagline", "label": "Header tagline", "default": "Find the ideal gift for your loved ones." },
+    { "type": "checkbox", "id": "show_cta", "label": "Show header CTA", "default": true },
+    { "type": "url", "id": "shop_link", "label": "Shop link", "default": "/collections/all" },
+
+    { "type": "image_picker", "id": "hamburger_icon", "label": "Hamburger icon" },
+    { "type": "image_picker", "id": "logo1", "label": "Logo part 1" },
+    { "type": "image_picker", "id": "logo2", "label": "Logo part 2" },
+    { "type": "image_picker", "id": "cta_arrow_black", "label": "CTA arrow (header)" },
+    { "type": "image_picker", "id": "shop_arrow", "label": "Shop arrow (mobile)" },
+
+    { "type": "text", "id": "hero_title", "label": "Hero title", "default": "The Gift Guide" },
+    { "type": "textarea", "id": "hero_desc", "label": "Hero description (mobile)", "default": "Discover Joy: Your Ultimate Holiday Gift Destination." },
+    { "type": "textarea", "id": "hero_rich_desc", "label": "Hero description (desktop)", "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season." },
+    { "type": "image_picker", "id": "mobile_hero_bg", "label": "Mobile hero background" },
+    { "type": "image_picker", "id": "desktop_hero_bg", "label": "Desktop hero background" },
+
+    { "type": "text", "id": "sustain_text", "label": "Sustainability ribbon text", "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL" },
+    { "type": "text", "id": "gallery_title", "label": "Gallery title", "default": "Tisso vison in the wild" }
+  ],
+  "blocks": [
+    {
+      "type": "gallery_item",
+      "name": "Gallery item",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        {
+          "type": "select",
+          "id": "overlay_position",
+          "label": "Overlay position (desktop)",
+          "default": "overlay-1",
+          "options": [
+            { "value": "overlay-1", "label": "Overlay 1" },
+            { "value": "overlay-2", "label": "Overlay 2" },
+            { "value": "overlay-3", "label": "Overlay 3" },
+            { "value": "overlay-4", "label": "Overlay 4" },
+            { "value": "overlay-5", "label": "Overlay 5" },
+            { "value": "overlay-6", "label": "Overlay 6" }
+          ]
+        },
+        { "type": "url", "id": "card_asset_url", "label": "Card asset URL (HTML to fetch)" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    { "name": "Gift Guide Landing", "category": "Landing" }
+  ]
+}
+{% endschema %}

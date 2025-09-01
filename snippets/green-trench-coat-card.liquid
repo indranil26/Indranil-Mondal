@@ -1,0 +1,254 @@
+{% comment %}
+  Section: Green Trench Coat Card
+  Modal-friendly product detail card (fragment) with editable settings, designed to be fetched into a modal.
+{% endcomment %}
+
+{%- assign close_icon_url = section.settings.close_icon != blank 
+  ? section.settings.close_icon | image_url: width: 22 
+  : 'img_group_1000008134.svg' | asset_url -%}
+
+{%- assign dropdown_arrow_url = section.settings.dropdown_arrow != blank 
+  ? section.settings.dropdown_arrow | image_url: width: 24 
+  : 'img_arrow_down.svg' | asset_url -%}
+
+{%- assign cart_arrow_url = section.settings.cart_arrow != blank 
+  ? section.settings.cart_arrow | image_url: width: 48 
+  : 'img_line_15_white_a700.svg' | asset_url -%}
+
+{%- assign product_image_url = section.settings.product_image != blank 
+  ? section.settings.product_image | image_url: width: 800 
+  : 'img_image_825.png' | asset_url -%}
+
+<style>
+  /* Scoped namespace: gtc- (Green Trench Coat) */
+  .gtc-container { background:#fff; box-shadow:0 2px 4px #00000033; width:100%; max-width:400px; margin:0 auto; padding:12px 16px 24px 16px; font-family:'Jost', Arial, sans-serif; }
+  .gtc-content { display:flex; flex-direction:column; align-items:center; width:100%; }
+  .gtc-header { display:flex; flex-direction:column; align-items:center; width:100%; margin-bottom:16px; }
+  .gtc-image { width:45%; height:159px; object-fit:cover; margin-bottom:-2px; margin-right:16px; }
+  .gtc-info { display:flex; flex-direction:column; align-items:flex-start; flex:1; gap:16px; width:100%; }
+  .gtc-close { width:16px; height:11px; align-self:flex-end; margin-bottom:16px; cursor:pointer; }
+
+  .gtc-details { display:flex; flex-direction:column; align-items:flex-start; width:100%; gap:10px; }
+  .gtc-title { font-size:14px; font-weight:300; line-height:18px; color:#000; }
+  .gtc-price { font-size:14px; font-family:'Lustria', serif; font-weight:400; line-height:16px; color:#000; }
+  .gtc-desc  { font-size:12px; font-weight:300; line-height:14px; color:#000; width:100%; }
+
+  .gtc-color { display:flex; flex-direction:column; align-items:flex-start; width:100%; max-width:272px; gap:2px; margin-top:16px; }
+  .gtc-label { font-size:12px; font-weight:400; line-height:16px; color:#333; }
+  .gtc-color-row { display:flex; align-items:center; width:100%; border:1px solid #000; }
+  .gtc-color-opt { padding-right:79px; display:flex; align-items:center; cursor:pointer; transition:all .3s ease; }
+  .gtc-color-opt:hover { opacity:.8; }
+  .gtc-swatch { width:7px; height:32px; border:1px solid #000; }
+  .gtc-swatch--primary { background-color: {{ section.settings.color_primary | default: '#FFFFFF' }} !important; border-color:#000 !important; }
+  .gtc-swatch--secondary { background-color: {{ section.settings.color_secondary | default: '#000000' }} !important; border-color:#000 !important; }
+  .gtc-color-text { font-size:16px; font-weight:400; line-height:20px; color:#000; margin-left:8px; text-transform:capitalize; }
+  .gtc-color-opt.selected { background:#000; }
+  .gtc-color-opt.selected .gtc-color-text { color:#fff; }
+
+  .gtc-size { display:flex; flex-direction:column; align-items:flex-start; width:100%; max-width:272px; gap:2px; margin-top:8px; }
+  .gtc-sizebar { position:relative; width:100%; border:1px solid #000; display:flex; align-items:center; cursor:pointer; user-select:none; }
+  .gtc-size-text { padding-left:3%; font-size:14px; font-weight:400; line-height:18px; color:#000; margin:8px 0; flex:1; }
+  .gtc-size-ctrl { display:inline-flex; align-items:center; gap:8px; pointer-events:none; padding:0 8px; }
+  .gtc-size-line { width:1px; height:30px; background:#000; }
+  .gtc-arrow { width:12px; height:6px; transition:transform .25s; }
+
+  .gtc-menu { position:absolute; top:110%; left:0; right:0; max-height:96px; overflow-y:auto; border:1px solid #000; background:#fff; box-shadow:0 6px 12px #0002; margin:6px 0 0; padding:0; list-style:none; display:none; z-index:1000; scrollbar-width:none; -ms-overflow-style:none; }
+  .gtc-menu::-webkit-scrollbar { display:none; }
+  .gtc-menu.show { display:block; }
+  .gtc-opt { padding:8px 12px; font-family:'Jost', Arial, sans-serif; font-size:14px; line-height:18px; border-bottom:1px solid #eee; cursor:pointer; }
+  .gtc-opt:last-child { border-bottom:none; }
+  .gtc-opt:hover, .gtc-opt.selected { background:#000; color:#fff; }
+
+  .gtc-cta { display:flex; justify-content:flex-end; align-items:center; width:100%; max-width:272px; background:#000; padding:8px 30px; margin-top:40px; cursor:pointer; transition:all .3s ease; border:0; }
+  .gtc-cta:hover { background:#333; transform:translateY(-2px); }
+  .gtc-cta:active { transform:translateY(0); background:#555; }
+  .gtc-cta-text { font-size:14px; font-weight:400; line-height:18px; text-transform:uppercase; color:#fff; }
+  .gtc-cta-arrow { width:32px; height:1px; margin-left:28px; }
+
+  @media (min-width:640px) {
+    .gtc-header { flex-direction:row; align-items:end; }
+    .gtc-image { height:159px; width:45%; object-fit:cover; margin-bottom:-2px; margin-right:16px; }
+    .gtc-price { font-size:17px; }
+    .gtc-container { max-width:282px; }
+    .gtc-desc { font-size:14px; font-weight:200; }
+    .gtc-color { margin-top:-7px; }
+  }
+
+  @media (min-width:768px) {
+    .gtc-title { font-size:16px; line-height:24px; }
+    .gtc-price { font-size:16px; line-height:21px; }
+    .gtc-desc { font-size:13px; line-height:15px; }
+    .gtc-image { height:184px; margin-left:8px; }
+    .gtc-cta { margin-top:50px; }
+    .gtc-color-opt { padding-right:90px; }
+    .gtc-cta-text { font-size:16px; line-height:24px; }
+    .gtc-swatch { height:40px; }
+    .gtc-size-text { font-size:16px; line-height:24px; padding-left:4%; }
+    .gtc-size-line { height:38px; }
+  }
+
+  @media (min-width:1024px) {
+    .gtc-color-opt { padding-right:100px; }
+    .gtc-container { max-width:350px; padding:20px 32px 40px 32px; }
+    .gtc-desc { font-size:12px !important; }
+    .gtc-image { height:152px !important; margin-left:5px !important; }
+  }
+
+  @media (min-width:0px) and (max-width:639px) {
+    .gtc-header { flex-direction:row; }
+    .gtc-details { padding-top:31px; }
+    .gtc-container { max-width:330px !important; position:relative; }
+    .gtc-image { width:123px !important; height:122px !important; margin-bottom:-34px !important; padding-left:10px !important; }
+    .gtc-info { padding-left:7px !important; }
+    .gtc-desc { font-size:13px !important; }
+    .gtc-color { margin-top:0 !important; }
+    .gtc-close { position:absolute; top:10px; right:10px; z-index:10; }
+  }
+</style>
+
+<div class="gtc-container">
+  <div class="gtc-content">
+    <div class="gtc-header">
+      <img src="{{ product_image_url }}" alt="{{ section.settings.product_image.alt | escape | default: 'Product image' }}" class="gtc-image" />
+      <div class="gtc-info">
+        <!-- Keep .close-button for landing modal to bind -->
+        <img src="{{ close_icon_url }}" alt="Close" class="gtc-close close-button" />
+        <div class="gtc-details">
+          <h1 class="gtc-title">{{ section.settings.title | default: 'Green Trench Coat' }}</h1>
+          <p class="gtc-price">{{ section.settings.price | default: '980,00€' }}</p>
+          <p class="gtc-desc">{{ section.settings.description | default: 'This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief.' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gtc-color">
+      <label class="gtc-label">{{ section.settings.color_label | default: 'Color' }}</label>
+      <div class="gtc-color-row">
+        <div class="gtc-color-opt">
+          <div class="gtc-swatch gtc-swatch--primary"></div>
+          <span class="gtc-color-text">{{ section.settings.color_primary_label | default: 'White' }}</span>
+        </div>
+        <div class="gtc-color-opt" style="flex:1;">
+          <div class="gtc-swatch gtc-swatch--secondary"></div>
+          <span class="gtc-color-text">{{ section.settings.color_secondary_label | default: 'Black' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="gtc-size">
+      <label class="gtc-label">{{ section.settings.size_label | default: 'Size' }}</label>
+      <div class="gtc-sizebar" id="gtcSizeBar" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
+        <span class="gtc-size-text" id="gtcSizeText">{{ section.settings.size_prompt | default: 'Choose your size' }}</span>
+        <div class="gtc-size-ctrl">
+          <div class="gtc-size-line"></div>
+          <img src="{{ dropdown_arrow_url }}" alt="toggle" class="gtc-arrow" id="gtcArrow">
+        </div>
+        <ul class="gtc-menu" id="gtcMenu" role="listbox" aria-label="Size options">
+          {%- assign size_list = section.settings.sizes | default: 'XS,S,M,L,XL' | split: ',' -%}
+          {%- for s in size_list -%}
+            {%- assign s_trim = s | strip -%}
+            <li class="gtc-opt" role="option" aria-selected="false">{{ s_trim }}</li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+
+    <button class="gtc-cta" type="button" id="gtcAddToCart">
+      <span class="gtc-cta-text">{{ section.settings.cta_label | default: 'Add to cart' }}</span>
+      <img src="{{ cart_arrow_url }}" alt="Arrow" class="gtc-cta-arrow" />
+    </button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Size dropdown
+    var bar = document.getElementById('gtcSizeBar');
+    var menu = document.getElementById('gtcMenu');
+    var label = document.getElementById('gtcSizeText');
+    var arrow = document.getElementById('gtcArrow');
+    var open = false;
+
+    function openMenu() { open = true; menu.classList.add('show'); arrow.style.transform = 'rotate(180deg)'; bar.setAttribute('aria-expanded', 'true'); }
+    function closeMenu() { open = false; menu.classList.remove('show'); arrow.style.transform = 'rotate(0deg)'; bar.setAttribute('aria-expanded', 'false'); }
+    function toggleMenu() { open ? closeMenu() : openMenu(); }
+
+    if (bar) {
+      bar.addEventListener('click', function(e){ e.stopPropagation(); toggleMenu(); });
+      window.addEventListener('click', function(){ if (open) closeMenu(); });
+      window.addEventListener('keydown', function(e){
+        if (e.key === 'Escape' && open) closeMenu();
+        if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === bar) { e.preventDefault(); toggleMenu(); }
+      });
+    }
+
+    if (menu) {
+      menu.querySelectorAll('.gtc-opt').forEach(function(opt){
+        opt.addEventListener('click', function(e){
+          e.stopPropagation();
+          label.textContent = opt.textContent;
+          menu.querySelectorAll('.gtc-opt').forEach(function(o){ o.classList.remove('selected'); o.setAttribute('aria-selected','false'); });
+          opt.classList.add('selected');
+          opt.setAttribute('aria-selected','true');
+          closeMenu();
+        });
+      });
+    }
+
+    // Color selection
+    var colorOpts = document.querySelectorAll('.gtc-color-opt');
+    colorOpts.forEach(function(opt){
+      opt.addEventListener('click', function(){
+        colorOpts.forEach(function(o){ o.classList.remove('selected'); });
+        opt.classList.add('selected');
+      });
+    });
+
+    // Add to cart placeholder: emit event for host page handler
+    var addBtn = document.getElementById('gtcAddToCart');
+    if (addBtn) {
+      addBtn.addEventListener('click', function(){
+        var evt = new CustomEvent('gtc:add-to-cart', {
+          detail: {
+            title: '{{ section.settings.title | escape }}',
+            price: '{{ section.settings.price | escape }}',
+            size: label ? label.textContent : null
+          }
+        });
+        window.dispatchEvent(evt);
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Green Trench Coat Card",
+  "settings": [
+    { "type": "image_picker", "id": "product_image", "label": "Product image" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Green Trench Coat" },
+    { "type": "text", "id": "price", "label": "Price", "default": "980,00€" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief." },
+
+    { "type": "image_picker", "id": "close_icon", "label": "Close icon" },
+    { "type": "image_picker", "id": "dropdown_arrow", "label": "Dropdown arrow icon" },
+    { "type": "image_picker", "id": "cart_arrow", "label": "Cart arrow icon" },
+
+    { "type": "text", "id": "color_label", "label": "Color label", "default": "Color" },
+    { "type": "text", "id": "color_primary_label", "label": "Primary color label", "default": "White" },
+    { "type": "color", "id": "color_primary", "label": "Primary color swatch", "default": "#FFFFFF" },
+    { "type": "text", "id": "color_secondary_label", "label": "Secondary color label", "default": "Black" },
+    { "type": "color", "id": "color_secondary", "label": "Secondary color swatch", "default": "#000000" },
+
+    { "type": "text", "id": "size_label", "label": "Size label", "default": "Size" },
+    { "type": "text", "id": "size_prompt", "label": "Size prompt", "default": "Choose your size" },
+    { "type": "text", "id": "sizes", "label": "Sizes (comma-separated)", "default": "XS,S,M,L,XL" },
+
+    { "type": "text", "id": "cta_label", "label": "Button text", "default": "Add to cart" }
+  ],
+  "blocks": [],
+  "presets": [
+    { "name": "Green Trench Coat Card" }
+  ]
+}
+{% endschema %}
