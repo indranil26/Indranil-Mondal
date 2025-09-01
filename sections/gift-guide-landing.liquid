@@ -964,7 +964,7 @@
       }
 
       .sustainability-text::after {
-        content: "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR";
+        content: "{{section.settings.sustainability_text_mobile}}";
         font-size: 12px;
         font-family: 'Jost', sans-serif;
         font-weight: 400;
@@ -1000,9 +1000,9 @@
         <img src="{{'img_group_1000007776.svg' | asset_url}}" alt="Tisso" class="logo-part-1">
         <img src="{{'img_group_1000007775.svg' | asset_url}}" alt="Vison" class="logo-part-2">
       </div>
-      <p class="header-tagline">Find the ideal gift for your loved ones.</p>
+      <p class="header-tagline">{{ section.settings.header_tagline }}</p>
       <a href="#" class="cta-button button-choose">
-        <span class="cta-text">choose gift</span>
+        <span class="cta-text">{{ section.settings.cta_button_text }}</span>
         <img src="{{'img_line_15_black_900.svg' | asset_url}}" alt="Arrow" class="c-arrow">
       </a>
     </div>
@@ -1011,8 +1011,8 @@
   <!-- Mobile Content Section (visible on mobile only) -->
   <main class="content-section">
     <div class="content-container">
-      <h1 class="hero-title">The Gift Guide</h1>
-      <p class="hero-description">Discover Joy: Your Ultimate Holiday Gift Destination.</p>
+      <h1 class="hero-title">{{ section.settings.hero_title }}</h1>
+      <p class="hero-description">{{ section.settings.hero_description }}</p>
 
       <!-- Hero CTA Section -->
       <div class="hero-cta-section">
@@ -1035,7 +1035,7 @@
             gifts to delight your loved ones this holiday season.
           </p>
           <a href="#" class="shop-button button-shop">
-            <span>Shop Now</span>
+            <span>{{ section.settings.hero_button_text }}</span>
             <svg
               class="shop-arrow"
               width="28"
@@ -1057,20 +1057,23 @@
   <!-- Sustainability Banner -->
   <section class="sustainability-banner">
     <div class="sustainability-content">
-      <p class="sustainability-text">SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL</p>
+      <p class="sustainability-text">{{ section.settings.sustainability_text_desktop }}</p>
     </div>
   </section>
 
   <!-- Gallery Section -->
   <section class="gallery-section">
     <div class="gallery-container">
-      <h2 class="gallery-title">Tisso vison in the wild</h2>
+      <h2 class="gallery-title">{{ section.settings.gallery_title }}</h2>
       <div class="image-grid">
         <div class="image-item">
           <img src="{{'img_image_830.png'| asset_url}}" alt="Fashion lifestyle 1">
           <div
             class="image-overlay overlay-1"
             data-card-file="{{'orange-white-leg.html'|asset_url}}"
+            data-card-title="{{ section.settings.card1_title }}"
+            data-card-price="{{ section.settings.card1_price }}"
+            data-card-description="{{ section.settings.card1_description }}"
           ></div>
         </div>
         <div class="image-item">
@@ -1078,28 +1081,49 @@
           <div
             class="image-overlay overlay-2"
             data-card-file="{{'tailored-jacket-card.html'|asset_url}}"
+            data-card-title="{{ section.settings.card2_title }}"
+            data-card-price="{{ section.settings.card2_price }}"
+            data-card-description="{{ section.settings.card2_description }}"
           ></div>
         </div>
         <div class="image-item">
           <img src="{{'img_image_832.png'|asset_url}}" alt="Fashion lifestyle 3">
-          <div class="image-overlay overlay-3" data-card-file="{{'accordian-pleated-dress-card.html'|asset_url}}"></div>
+          <div
+            class="image-overlay overlay-3"
+            data-card-file="{{'accordian-pleated-dress-card.html'|asset_url}}"
+            data-card-title="{{ section.settings.card3_title }}"
+            data-card-price="{{ section.settings.card3_price }}"
+            data-card-description="{{ section.settings.card3_description }}"
+          ></div>
         </div>
         <div class="image-item">
           <img src="{{'img_image_833.png'|asset_url}}" alt="Fashion lifestyle 4">
           <div
             class="image-overlay overlay-4"
             data-card-file="{{'green-trench-coat-card.html'|asset_url}}"
+            data-card-title="{{ section.settings.card4_title }}"
+            data-card-price="{{ section.settings.card4_price }}"
+            data-card-description="{{ section.settings.card4_description }}"
           ></div>
         </div>
         <div class="image-item">
           <img src="{{'img_image_834.png' | asset_url}}" alt="Fashion lifestyle 5">
-          <div class="image-overlay overlay-5" data-card-file="{{'tennis-blue-tshirt-card.html'|asset_url}}"></div>
+          <div
+            class="image-overlay overlay-5"
+            data-card-file="{{'tennis-blue-tshirt-card.html'|asset_url}}"
+            data-card-title="{{ section.settings.card5_title }}"
+            data-card-price="{{ section.settings.card5_price }}"
+            data-card-description="{{ section.settings.card5_description }}"
+          ></div>
         </div>
         <div class="image-item">
           <img src="{{'img_image_835.png'|asset_url}}" alt="Fashion lifestyle 6">
           <div
             class="image-overlay overlay-6"
             data-card-file="{{'long-sleeve-tennis-top-card.html'|asset_url}}"
+            data-card-title="{{ section.settings.card6_title }}"
+            data-card-price="{{ section.settings.card6_price }}"
+            data-card-description="{{ section.settings.card6_description }}"
           ></div>
         </div>
       </div>
@@ -1118,6 +1142,9 @@
   imageOverlays.forEach((overlay) => {
     overlay.addEventListener('click', () => {
       const filePath = overlay.getAttribute('data-card-file');
+      const cardTitle = overlay.getAttribute('data-card-title');
+      const cardPrice = overlay.getAttribute('data-card-price');
+      const cardDescription = overlay.getAttribute('data-card-description');
       if (filePath) {
         fetch(filePath)
           .then((response) => {
@@ -1125,6 +1152,10 @@
             return response.text();
           })
           .then((data) => {
+            data = data.replace('{{CARD_TITLE}}', cardTitle);
+            data = data.replace('{{CARD_PRICE}}', cardPrice);
+            data = data.replace('{{CARD_DESCRIPTION}}', cardDescription);
+
             modalContent.innerHTML = data; // Load external HTML
             modalOverlay.classList.add('active');
 
@@ -1169,3 +1200,196 @@
     }
   });
 </script>
+{% schema %}
+{
+  "name": "Gift Guide Landing",
+  "settings": [
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero Title",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_description",
+      "label": "Hero Description",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination."
+    },
+    {
+      "type": "text",
+      "id": "hero_button_text",
+      "label": "Shop Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "text",
+      "id": "header_tagline",
+      "label": "Header Tagline",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "label": "CTA Button Text",
+      "default": "choose gift"
+    },
+    {
+      "type": "text",
+      "id": "sustainability_text_desktop",
+      "label": "Sustainability Text (Desktop)",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+    },
+    {
+      "type": "text",
+      "id": "sustainability_text_mobile",
+      "label": "Sustainability Text (Mobile)",
+      "default": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR"
+    },
+    {
+      "type": "text",
+      "id": "gallery_title",
+      "label": "Gallery Title",
+      "default": "Tisso vison in the wild"
+    },
+    // Card 1 Settings
+    {
+      "type": "header",
+      "content": "Orange Wide Leg"
+    },
+    {
+      "type": "text",
+      "id": "card1_title",
+      "label": "Product Title",
+      "default": "Orange Wide Leg"
+    },
+    {
+      "type": "text",
+      "id": "card1_price",
+      "label": "Product Price",
+      "default": "980,00€"
+    },
+    {
+      "type": "textarea",
+      "id": "card1_description",
+      "label": "Product Description",
+      "default": "This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief."
+    },
+    // Card 2 Settings
+    {
+      "type": "header",
+      "content": "Tailore Jacket"
+    },
+    {
+      "type": "text",
+      "id": "card2_title",
+      "label": "Product Title",
+      "default": "Accordian Pleated Dress"
+    },
+    {
+      "type": "text",
+      "id": "card2_price",
+      "label": "Product Price",
+      "default": "980,00€"
+    },
+    {
+      "type": "textarea",
+      "id": "card2_description",
+      "label": "Product Description",
+      "default": "This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief."
+    },
+    // Card 3 Settings
+    {
+      "type": "header",
+      "content": "Accordion Pleated Dress"
+    },
+    {
+      "type": "text",
+      "id": "card3_title",
+      "label": "Product Title",
+      "default": "Accordian Pleated Dress"
+    },
+    {
+      "type": "text",
+      "id": "card3_price",
+      "label": "Product Price",
+      "default": "980,00€"
+    },
+    {
+      "type": "textarea",
+      "id": "card3_description",
+      "label": "Product Description",
+      "default": "This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief."
+    },
+    // Card 4 Settings
+    {
+      "type": "header",
+      "content": "Green Trench Coat"
+    },
+    {
+      "type": "text",
+      "id": "card4_title",
+      "label": "Product Title",
+      "default": "Green Trench Coat"
+    },
+    {
+      "type": "text",
+      "id": "card4_price",
+      "label": "Product Price",
+      "default": "980,00€"
+    },
+    {
+      "type": "textarea",
+      "id": "card4_description",
+      "label": "Product Description",
+      "default": "This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief."
+    },
+    // Card 5 Settings
+    {
+      "type": "header",
+      "content": "Tennis Blue T-Shirt"
+    },
+    {
+      "type": "text",
+      "id": "card5_title",
+      "label": "Product Title",
+      "default": "Tennis Blue T-Shirt"
+    },
+    {
+      "type": "text",
+      "id": "card5_price",
+      "label": "Product Price",
+      "default": "980,00€"
+    },
+    {
+      "type": "textarea",
+      "id": "card5_description",
+      "label": "Product Description",
+      "default": "This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief."
+    },
+    // Card 6 Settings
+    {
+      "type": "header",
+      "content": "Long Sleeve Tennis Top"
+    },
+    {
+      "type": "text",
+      "id": "card6_title",
+      "label": "Product Title",
+      "default": "Long Sleeve Tennis Top"
+    },
+    {
+      "type": "text",
+      "id": "card6_price",
+      "label": "Product Price",
+      "default": "980,00€"
+    },
+    {
+      "type": "textarea",
+      "id": "card6_description",
+      "label": "Product Description",
+      "default": "This one-piece swimsuit is crafted from jersey featuring an allover micro Monogram motif in relief."
+    }
+  ]
+}
+{% endschema %}
