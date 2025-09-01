@@ -723,73 +723,6 @@
   });
 
   function addToCart() {
-  const colorOption = document.querySelector('.color-option.selected .color-text')?.textContent.toLowerCase();
-  const sizeOption = document.querySelector('#sizeLabel')?.textContent;
-
-  if (!colorOption || !sizeOption || sizeOption === 'Choose your size') {
-    alert('Please select both color and size');
-    return;
-  }
-
-  const variantIds = {
-    'black-xs': '42980281876563',
-    'white-xs': '42980281909331',
-    'black-s': '42980281942099',
-    'white-s': '42980281974867',
-    'black-m': '42980282007635',
-    'white-m': '42980282040403',
-    'black-l': '42980282073171',
-    'white-l': '42980282105939'
-  };
-
-  const selectedVariant = `${colorOption}-${sizeOption?.toLowerCase()}`;
-  const variantId = variantIds[selectedVariant];
-
-  if (!variantId) {
-    alert('Selected variant not available');
-    return;
-  }
-
-  fetch('/cart/add.js', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      items: [{
-        id: variantId,
-        quantity: 1
-      }]
-    })
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(data => {
-    if (data.status && data.status === 422) {
-      throw new Error(data.description);
-    }
-    
-    console.log('Added to cart:', data);
-    
-    // Check if this is Black + Medium combination
-    if (colorOption === 'black' && sizeOption?.toLowerCase() === 'm') {
-      addSoftWinterJacket();
-    } else {
-      alert('Added to cart!');
-      closeModal();
-    }
-  })
-  .catch(error => {
-    console.error('Error adding to cart:', error);
-    alert('Error adding to cart: ' + error.message);
-  });
-}
-}
     // Get selected variant ID (you'll need to determine this based on color/size selection)
     const colorOption = document.querySelector('.color-option.selected .color-text')?.textContent.toLowerCase();
     const sizeOption = document.querySelector('#sizeLabel')?.textContent;
@@ -845,7 +778,7 @@
         console.error('Error:', error);
         alert('Error adding to cart');
       });
-  
+  }
 
   function addSoftWinterJacket() {
     // Replace with actual "Soft Winter Jacket" variant ID
