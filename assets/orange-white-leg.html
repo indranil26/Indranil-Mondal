@@ -660,6 +660,12 @@
   </div>
 </div>
 <script>
+
+  // Add this at the end of your script
+document.addEventListener('DOMContentLoaded', function() {
+  // Bind the add to cart click event
+  document.querySelector('.add-to-cart').addEventListener('click', addToCart);
+});
   const dropdown = document.getElementById('sizeDropdown');
   const menu = document.getElementById('sizeMenu');
   const label = document.getElementById('sizeLabel');
@@ -802,10 +808,6 @@
       });
   }
 
-  // Add this at the end of your script
-document.addEventListener('DOMContentLoaded', function() {
-  // Bind the add to cart click event
-  document.querySelector('.add-to-cart').addEventListener('click', addToCart);
-});
+  
 
 </script>
