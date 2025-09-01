@@ -598,9 +598,13 @@
 <div class="product-container">
   <div class="product-content">
     <div class="product-header">
-      <img src="https:////cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_image_825.png?v=89436467806170052251756707100" alt="Tailored Jacket" class="product-image">
+      <img
+        src="https:////cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_image_825.png?v=89436467806170052251756707100"
+        alt="Tailored Jacket" class="product-image">
       <div class="product-info">
-        <img src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_group_1000008134.svg?v=110356064147524365121756707096" alt="Close" class="close-button">
+        <img
+          src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_group_1000008134.svg?v=110356064147524365121756707096"
+          alt="Close" class="close-button">
         <div class="product-details">
           <h1 class="product-title">Green Trench Coat</h1>
           <p class="product-price">980,00€</p>
@@ -635,10 +639,7 @@
           <div class="dropdown-line"></div>
           <img
             src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_arrow_down.svg?v=141419414469500226111756707092"
-            alt="toggle"
-            class="dropdown-arrow"
-            id="sizeArrow"
-          >
+            alt="toggle" class="dropdown-arrow" id="sizeArrow">
         </div>
 
         <ul class="dropdown-menu" id="sizeMenu">
@@ -646,14 +647,15 @@
           <li class="dropdown-option">S</li>
           <li class="dropdown-option">M</li>
           <li class="dropdown-option">L</li>
-          <li class="dropdown-option">XL</li>
         </ul>
       </div>
     </div>
 
     <button class="add-to-cart" onclick="addToCart()">
       <span class="cart-text">Add to cart</span>
-      <img src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_line_15_white_a700.svg?v=73367509143898519221756707105" alt="Arrow" class="cart-arrow">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0662/4195/3875/t/4/assets/img_line_15_white_a700.svg?v=73367509143898519221756707105"
+        alt="Arrow" class="cart-arrow">
     </button>
   </div>
 </div>
@@ -719,4 +721,152 @@
       option.classList.add('selected');
     });
   });
+
+  function addToCart() {
+    // Get selected variant ID (you'll need to determine this based on color/size selection)
+    const colorOption = document.querySelector('.color-option.selected .color-text')?.textContent.toLowerCase();
+    const sizeOption = document.querySelector('#sizeLabel')?.textContent;
+
+    // Replace with actual variant IDs from your products
+    const variantIds = {
+      'red-xs': 'VARIANT_ID_HERE',
+      'red-s': 'VARIANT_ID_HERE',
+      'red-m': 'VARIANT_ID_HERE',
+      // Add all combinations
+    };
+
+    const selectedVariant = `${colorOption}-${sizeOption?.toLowerCase()}`;
+    const variantId = variantIds[selectedVariant];
+
+    if (!variantId) {
+      alert('Please select size and color');
+      return;
+    }
+
+    // Add main product to cart
+    const formData = new FormData();
+    formData.append('id', variantId);
+    formData.append('quantity', 1);
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Check if this is Black + Medium combination
+        if (colorOption === 'black' && sizeOption?.toLowerCase() === 'm') {
+          addSoftWinterJacket();
+        } else {
+          alert('Added to cart!');
+          closeModal();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error adding to cart');
+      });
+  }
+
+  function addSoftWinterJacket() {
+    // Replace with actual "Soft Winter Jacket" variant ID
+    const winterJacketVariantId = 'SOFT_WINTER_JACKET_VARIANT_ID';
+
+    const formData = new FormData();
+    formData.append('id', winterJacketVariantId);
+    formData.append('quantity', 1);
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        alert('Added to cart! Soft Winter Jacket also added as bonus!');
+        closeModal();
+      })
+      .catch(error => {
+        console.error('Error adding winter jacket:', error);
+      });
+  }
+
+  function addToCart() {
+    // Get selected variant ID (you'll need to determine this based on color/size selection)
+    const colorOption = document.querySelector('.color-option.selected .color-text')?.textContent.toLowerCase();
+    const sizeOption = document.querySelector('#sizeLabel')?.textContent;
+
+    // Replace with actual variant IDs from your products
+    const variantIds = {
+      "black-xs": "42980282957907",
+
+      "white-xs": "42980282990675",
+
+      "black-s": "42980283023443",
+
+      "white-s": "42980283056211",
+
+      "black-m": "42980283088979",
+
+      "white-m": "42980283121747",
+
+      "black-l": "42980283154515",
+
+      "white-l": "42980283187283"
+      // Add all combinations
+    };
+
+    const selectedVariant = `${colorOption}-${sizeOption?.toLowerCase()}`;
+    const variantId = variantIds[selectedVariant];
+
+    if (!variantId) {
+      alert('Please select size and color');
+      return;
+    }
+
+    // Add main product to cart
+    const formData = new FormData();
+    formData.append('id', variantId);
+    formData.append('quantity', 1);
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Check if this is Black + Medium combination
+        if (colorOption === 'black' && sizeOption?.toLowerCase() === 'm') {
+          addSoftWinterJacket();
+        } else {
+          alert('Added to cart!');
+          closeModal();
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error adding to cart');
+      });
+  }
+
+  function addSoftWinterJacket() {
+    // Replace with actual "Soft Winter Jacket" variant ID
+    const winterJacketVariantId = '42980282269779';
+
+    const formData = new FormData();
+    formData.append('id', winterJacketVariantId);
+    formData.append('quantity', 1);
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        alert('Added to cart! Soft Winter Jacket also added as bonus!');
+        closeModal();
+      })
+      .catch(error => {
+        console.error('Error adding winter jacket:', error);
+      });
+  }
 </script>
