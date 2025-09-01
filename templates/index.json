@@ -1,16 +1,10 @@
 {
+  "type": "main-page",
   "sections": {
-    "banner-custom": {
-      "type": "banner-custom",
-      "settings": {}
-    },
-    "grid-custom": {
-      "type": "grid-custom",
+    "tisso-vison-gift-guide": {
+      "type": "tisso-vison-gift-guide",
       "settings": {}
     }
   },
-  "order": [
-    "banner-custom",
-    "grid-custom"
-  ]
+  "order": ["tisso-vison-gift-guide"]
 }
